@@ -10,7 +10,7 @@ public class Order {
     private List<OrderLine> orderLines;
 
     // Constructor
-    public Order(String ordernum, LocalDate orderdate) {
+    Order(String ordernum, LocalDate orderdate) {
         this.ordernum = ordernum;
         this.orderdate = orderdate;
         this.orderLines = new ArrayList<>();
