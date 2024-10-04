@@ -1,4 +1,4 @@
-package labsolns.prob1Compo;
+package labsolns.prob1Composition;
 
 public class Main {
 
