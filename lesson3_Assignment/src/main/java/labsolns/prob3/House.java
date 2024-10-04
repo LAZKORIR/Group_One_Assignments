@@ -1,7 +1,5 @@
 package labsolns.prob3;
 
-
-
 public class House implements Property{
 	private double lotSize;
 	private Address address;

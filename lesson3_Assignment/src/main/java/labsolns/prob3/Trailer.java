@@ -1,6 +1,5 @@
 package labsolns.prob3;
 
-
 public class Trailer implements Property{
 	private static final double RENT = 500;
 	private Address address;

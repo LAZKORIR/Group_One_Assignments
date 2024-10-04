@@ -1,7 +1,5 @@
 package labsolns.prob3;
 
-
-
 public class Condo implements Property{
 	private Address address;
 	private int numberOfFloors;

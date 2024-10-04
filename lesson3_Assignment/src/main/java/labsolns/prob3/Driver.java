@@ -1,10 +1,5 @@
 package labsolns.prob3;
 
-import labsolns.prob3.Address;
-import labsolns.prob3.Condo;
-import labsolns.prob3.House;
-import labsolns.prob3.Trailer;
-
 import static labsolns.prob3.Admin.computeTotalRent;
 
 public class Driver {
