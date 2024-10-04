@@ -7,6 +7,7 @@ public class Person {
         name = n;
     }
 
+
     public String getName() {
         return name;
     }
