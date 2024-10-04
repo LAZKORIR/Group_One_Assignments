@@ -15,6 +15,11 @@ public class Building {
     public void addApartments(Apartment apartment){
         this.apartments.add(apartment);
     }
+
+    public List<Apartment> getApartments() {
+        return apartments;
+    }
+
     public double calculateProfit() {
         double totalRent = 0;
         for (Apartment apt : apartments) {

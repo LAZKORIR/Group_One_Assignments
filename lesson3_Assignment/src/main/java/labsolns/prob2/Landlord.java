@@ -16,6 +16,15 @@ public class Landlord {
     public void addBuildings(Building building){
         this.buildings.add(building);
     }
+
+    public List<Building> getBuildings() {
+        return buildings;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public double calculateTotalProfit() {
         double totalProfit = 0;
         for (Building building : buildings) {
