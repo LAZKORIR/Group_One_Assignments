@@ -1,0 +1,8 @@
+The object p1 is of PersonWithJob(the subclass) and the object p2 is of Person which is the superclass
+
+The second method p2.equals(p1) returns true because it is using p2(the superclass)  as the calling object, hence the equals method used is the one in the parent class, where the method typecasts the incoming argument p1 into a Person object. This is possible because p1 is a subclass of p2 hence it can be typecast into the parent, and since both objects have the same name(Joe) which attribute the method compares and hence it returns true. 
+
+However this is a shortfall of inheritance because in actual sense these two objects are not the same.
+
+
+The first method p1.equals(p2) method is now using p1(the child class object) as the calling object, hence it will then use the overridden method in the child class. This method receives the parent object(p2) as the argument, and then tries to check if it is an instance of PersonWithJob class, and immediately returns a false. 
