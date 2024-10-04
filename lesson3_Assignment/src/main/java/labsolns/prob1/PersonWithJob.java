@@ -16,6 +16,7 @@ public class PersonWithJob extends Person {
 	public boolean equals(Object aPersonWithJob) {
 		if(aPersonWithJob == null) return false; 
 		if(!(aPersonWithJob instanceof PersonWithJob)) return false;
+		System.out.println("===================EXE============");
 		PersonWithJob p = (PersonWithJob)aPersonWithJob;
 		boolean isEqual = this.getName().equals(p.getName()) &&
 				this.getSalary()==p.getSalary();
