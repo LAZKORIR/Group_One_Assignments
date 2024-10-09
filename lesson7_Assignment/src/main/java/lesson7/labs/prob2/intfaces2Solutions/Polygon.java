@@ -1,4 +1,4 @@
-package prob2.intfaces2Solutions;
+package lesson7.labs.prob2.intfaces2Solutions;
 
 public interface Polygon extends ClosedCurve {
     double[] getLengths();

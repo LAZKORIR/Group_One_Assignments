@@ -1,4 +1,4 @@
-package prob2.intfaces2;
+package lesson7.labs.prob2.intfaces2;
 
 import java.util.ArrayList;
 import java.util.List;

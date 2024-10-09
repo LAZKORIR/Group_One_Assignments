@@ -1,6 +1,4 @@
-package prob2.intfaces2;
-
-import java.util.List;
+package lesson7.labs.prob2.intfaces2;
 
 interface I1{
 	void m1(); // public abstract void m1();
