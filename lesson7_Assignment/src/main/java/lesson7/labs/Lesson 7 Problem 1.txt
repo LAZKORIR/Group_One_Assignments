@@ -1,0 +1,5 @@
+Part B - the code does not work correctly because the equals method has not been properly overridden by the Employee class, it should accept a general Object parameter so that it can override the method from the Object superclass, then have type casting to an Employee class. The HashCode method has also not been overridden by the Employee class. 
+
+Part C - the issue with the code is that equals method in the Employee class has been correctly overridden however there is no overriding of the Hashcode method, yet both methods are very important when dealing with data that is in hash collections like the HashMap being used in the remove duplicates method. 
+
+Part D - in the code provided, the Hashcode method takes into account the visited parameter of the Employee object when calculating carrying out the comparison, along with the name and the salary, however this visited parameter is already being manipulated in the remove duplicates method where a value of true is set to it in the else case. This modification of the visited parameter during the program execution could affect the execution of the Hashcode and equals methods. 
