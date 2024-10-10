@@ -1,4 +1,4 @@
-package lesson8.lecture.inclassdemo;
+package lesson8.labs.inclassdemo;
 
 public class MyClass {
 	int x;

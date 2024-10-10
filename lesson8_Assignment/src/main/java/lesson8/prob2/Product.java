@@ -1,4 +1,4 @@
-package lesson8.lecture.inclassdemo;
+package lesson8.prob2;
 
 public class Product {
 	final String title;
