@@ -9,6 +9,7 @@
         <module name="lesson7_Assignment" />
         <module name="lesson8_Assignment" />
         <module name="lesson9_Assignment" />
+        <module name="lesson10_Assignment" />
         <module name="lesson3" />
       </profile>
     </annotationProcessing>
