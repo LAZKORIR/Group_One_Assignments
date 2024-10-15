@@ -1,6 +1,7 @@
 package lesson9.prob7;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -16,6 +17,26 @@ public class Main {
 		                  new Employee("Donald", "Trump", 100000));
 		
 		//your stream pipeline here
+	String res =	list.stream()
+				.filter(n ->n.getSalary() > 100000)
+				.filter(emp -> {
+					String lname = emp.getLastName();
+					char fchar = lname.toUpperCase().charAt(0);
+					return  fchar>= 'N' && fchar <= 'Z';
+				})
+				.map(e -> e.getFirstName() + " "+e.getLastName())
+				.sorted()
+				.collect(Collectors.joining(","));
+
+		System.out.println(res);
+
+		System.out.println();
+
+		// Using the LambdaLibrary element
+		String result = LambdaLibrary.FILTER_AND_COLLECT_EMPLOYEES.apply(list, 100000.0);
+
+		// Print the result
+		System.out.println(result); // Output: Alice Richards,Joe Stevens,John Sims,Steven Walters
 
 	}
 

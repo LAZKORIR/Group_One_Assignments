@@ -6,13 +6,19 @@ import java.util.stream.Stream;
 
 public class Section {
 	public static Stream<String> streamSection(Stream<String> stream, int m, int n) {
-		return null; //implement 
+		return stream
+				.skip(m)              // Skip the first m elements
+				.limit((n - m)+ 1);    // Limit the stream to n - m + 1 elements
 	}
 	
 	public static void main(String[] args) {
 		/* Make three calls for the streamSection() method with different inputs range for the m and n.              
 		   Use nextStream() method to supply the Stream input as a first argument in streamSection() method */
-	
+
+		System.out.println(streamSection(nextStream(), 0, 3).toList()); // [aaa, bbb, ccc, ddd]
+		System.out.println(streamSection(nextStream(), 1, 5).toList()); // [bbb, ccc, ddd, eee, fff]
+		System.out.println(streamSection(nextStream(), 5, 8).toList()); // [fff, ggg, hhh, iii]
+
 	}
 	
 	//support method for the main method -- for testing

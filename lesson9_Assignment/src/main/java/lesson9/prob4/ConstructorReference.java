@@ -3,6 +3,7 @@ package lesson9.prob4;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -53,18 +54,33 @@ class Human
 public class ConstructorReference {
 public static void main(String args[]){
 	Human[] list = { new Human("Joe",35,"Male"), new Human("Jane",45,"Female"), new Human("John",30,"Male")};
-	
+	List<Human> humanList = Arrays.asList(list);
     // Query 1  : Print only Female candidates names
+	humanList.stream()
+			.filter(f -> f.getGender().equalsIgnoreCase("Female"))
+			.map(Human::getName)
+			.forEach(System.out::println);
 	
 
     /* Query 2 : Create an object for the Type of Human class by choosing suitable Interface for the three  constructors using ClassName::new. 
                  Then print the object status */
- 
+
+	TriFunction<String,Integer,String,Human> createAllHumans = Human::new;
+	Human humanAll = createAllHumans.apply("Lazz",30,"Male");
+	System.out.println(humanAll);
 	// Query 3 : Count the male candidates whose age is more than 30
+
+	System.out.println(humanList.stream()
+			.filter(m->m.getGender().equalsIgnoreCase("Male"))
+			.count());
        
     
    }
 
+   @FunctionalInterface
+	interface  TriFunction<T,U,V,R>{
+	R apply(T t, U u, V v);
+   }
 
 
 }
