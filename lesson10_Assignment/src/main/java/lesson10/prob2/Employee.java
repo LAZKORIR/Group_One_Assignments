@@ -1,5 +1,7 @@
 package lesson10.prob2;
 
+import java.util.Objects;
+
 public class Employee extends Person {
 	int id;
 	int salary;
@@ -26,6 +28,20 @@ public class Employee extends Person {
 		
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
+		Employee employee = (Employee) obj;
+		return id == employee.id &&
+				Objects.equals(name, employee.name) &&
+				Double.compare(employee.salary, salary) == 0;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, salary);
+	}
 
 	public void setName(String name) {
 		this.name = name;

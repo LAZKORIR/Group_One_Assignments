@@ -9,7 +9,7 @@ public class Main {
 		System.out.println(result);
 
 		// Remove the /* */ to test your code once you implemented the generic method.
-	/*	Set<Integer> set = new HashSet<>(Arrays.asList(1,3,4,5,6,2));
+		Set<Integer> set = new HashSet<>(Arrays.asList(1,3,4,5,6,2));
 		result = containsTarget(set, 3);
 		System.out.println(result);
 
@@ -43,7 +43,7 @@ public class Main {
 		Account a = new Account(120,5000);
 
 		result = containsTarget(alist, a);
-		System.out.println(result);*/
+		System.out.println(result);
 
 	}
 	public static boolean contains1(List<String> list, String s) {
@@ -55,4 +55,11 @@ public class Main {
 		return false;
 	}
       /* Implement here the Generic method as per the requirement. Use the method name as containsTarget()*/
+	  public static <T> boolean containsTarget(Collection<T> collection, T target) {
+		  if (collection == null || target == null) return false;
+		  for (T item : collection) {
+			  if (item.equals(target)) return true;
+		  }
+		  return false;
+	  }
 }
