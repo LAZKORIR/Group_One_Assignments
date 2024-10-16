@@ -14,7 +14,7 @@ public class EmployeeInfo {
 	public static List<Employee> removeDuplicates(List<Employee> employees) {
 		List<Employee> noDupsList = new ArrayList<>();
 		noDupsList.add(employees.get(0));
-		for(int i = 1; i < employees.size(); ++i) {
+		for(int i = 1; i < employees.size(); ++i)  {
 			if(!inList(employees.get(i), noDupsList)) {
 				noDupsList.add(employees.get(i));
 			}
