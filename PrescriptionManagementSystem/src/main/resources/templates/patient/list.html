@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Patient List</title>
+</head>
+<body>
+<h1>Patients</h1>
+<ul>
+    <li th:each="patient : ${patients}">
+        <a th:href="@{'/patient/' + ${patient.id}}" th:text="${patient.name}"></a>
+    </li>
+</ul>
+<button onclick="window.location.href='/'">Home</button>
+</body>
+</html>

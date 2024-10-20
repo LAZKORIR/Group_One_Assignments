@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pharmacist List</title>
+</head>
+<body>
+<h1>Pharmacists</h1>
+<ul>
+    <li th:each="pharmacist : ${pharmacists}">
+        <a th:href="@{'/pharmacist/' + ${pharmacist.id}}" th:text="${pharmacist.name}"></a>
+    </li>
+</ul>
+<button onclick="window.location.href='/'">Home</button>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Physician Details</title>
+</head>
+<body>
+<h1 th:text="'Physician: ' + ${physician.name}"></h1>
+<p>Phone: <span th:text="${physician.phoneNumber}"></span></p>
+<ul>
+  <li th:each="prescription : ${physician.prescriptions}">
+    <span th:text="'Prescription ID: ' + ${prescription.id}"></span>
+  </li>
+</ul>
+<button onclick="window.location.href='/physician'">Back to Physicians</button>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Prescriptions</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<h1>Prescriptions</h1>
+<ul>
+    <li th:each="prescription : ${prescriptions}">
+        <span th:text="${prescription.medication}"></span> -
+        <button th:if="${prescription.refillable}"
+                th:onclick="'/pharmacist/dispense/' + ${prescription.id}">
+            Dispense
+        </button>
+    </li>
+</ul>
+</body>
+</html>

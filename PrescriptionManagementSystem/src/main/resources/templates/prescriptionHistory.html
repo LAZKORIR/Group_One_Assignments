@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Prescription History</title>
+</head>
+<body>
+<h1>Prescription History for <span th:text="${patient.name}"></span></h1>
+<ul>
+    <li th:each="prescription : ${patient.prescriptions}">
+        <p th:text="'Medication: ' + ${prescription.medication}"></p>
+        <p th:text="'Issued on: ' + ${prescription.issueDate}"></p>
+        <p th:text="'Refills remaining: ' + ${prescription.refillsRemaining}"></p>
+    </li>
+</ul>
+</body>
+</html>

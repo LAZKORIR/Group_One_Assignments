@@ -20,7 +20,7 @@ public class PuttingIntoPractice{
             new Transaction(mario, 2012, 710),	
             new Transaction(mario, 2012, 700),
             new Transaction(alan, 2012, 950)
-        );	
+        );
         
         
         // Query 1: Find all transactions from year 2011 and sort them by value (small to high).
@@ -51,6 +51,7 @@ public class PuttingIntoPractice{
 
         // Query 4: Return a string of all traders names sorted alphabetically.
         String traderNames = transactions.stream()
+
                 .map(t -> t.getTrader().getName())
                 .distinct()
                 .sorted()
