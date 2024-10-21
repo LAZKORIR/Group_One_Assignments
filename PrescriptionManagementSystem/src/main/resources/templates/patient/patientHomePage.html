@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Patient Dashboard</title>
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        .pane {
+            width: 800px;
+            max-width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .sidebar {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="pane">
+  <h1>Patient Prescription History</h1>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Medications</th>
+      <th>Dosage</th>
+      <th>Refillable</th>
+      <th>Prescribing Doctor</th>
+      <th>Issue Date</th>
+      <th>Expiration Date</th>
+      <th>Refills Remaining</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="prescription : ${prescriptions}">
+      <td th:text="${prescription.id}"></td>
+      <td>
+        <ul>
+          <li th:each="med : ${prescription.medications}" th:text="${med.name}"></li>
+        </ul>
+        <span th:if="${#lists.isEmpty(prescription.medications)}">No medications assigned</span>
+      </td>
+      <td th:text="${prescription.dosage}"></td>
+      <td th:text="${prescription.refillable ? 'Yes' : 'No'}"></td>
+      <td th:text="${prescription.prescribingDoctor}"></td>
+      <td th:text="${prescription.issueDate}"></td>
+      <td th:text="${prescription.expirationDate}"></td>
+      <td th:text="${prescription.refillsRemaining}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+
+  <div class="sidebar">
+    <button><a href="/">Back to Home</a></button>
+  </div>
+</div>
+</body>
+</html>

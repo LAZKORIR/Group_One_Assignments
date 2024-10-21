@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Generic Substitutes</title>
+</head>
+<body>
+<h1>Generic Substitutes for <span th:text="${medication.name}"></span></h1>
+<ul>
+    <li th:each="sub : ${substitutes}" th:text="${sub.name}"></li>
+</ul>
+<button><a href="/pharmacist">Back to Dashboard</a></button>
+</body>
+</html>

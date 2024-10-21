@@ -1,7 +1,10 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.service;
 
 
+import com.goupone.prescription.system.prescriptionmanagementystem.entity.PrescriptionEntity;
 import com.goupone.prescription.system.prescriptionmanagementystem.model.Prescription;
+import com.goupone.prescription.system.prescriptionmanagementystem.repository.PrescriptionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,10 +16,18 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     // Mock Data: In a real-world scenario, these would come from a database.
     private final List<Prescription> prescriptions = new ArrayList<>();
 
+    @Autowired
+    PrescriptionRepository prescriptionRepository;
+
     public PrescriptionServiceImpl() {
         // Adding some sample prescriptionEntities for testing.
         prescriptions.add(new Prescription(1, "2024-10-15", "2025-10-15", "John Doe", "Dr. Smith", "Pharmacist A"));
         prescriptions.add(new Prescription(2, "2024-09-01", "2025-09-01", "Alice", "Dr. Johnson", "Pharmacist B"));
+    }
+
+    @Override
+    public List<PrescriptionEntity> getAllPrescriptions() {
+        return prescriptionRepository.findAll();
     }
 
     @Override

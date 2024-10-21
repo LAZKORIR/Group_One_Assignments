@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Physician Dashboard</title>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Full-page layout */
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        /* Main pane styling */
+        .pane {
+            width: 800px;
+            max-width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Prescription table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Sidebar buttons */
+        .sidebar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Back button styling */
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="pane">
+    <h1>Physician Dashboard</h1>
+
+    <div class="sidebar">
+        <button><a href="/physician/add">Add Patient</a></button>
+        <button><a href="/physician/prescribe">Prescribe Medication</a></button>
+<!--        <button><a href="/physician/view-prescriptions">View All Prescriptions</a></button>-->
+    </div>
+
+    <h2>Prescriptions List</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Medications</th>
+            <th>Dosage</th>
+            <th>Refillable</th>
+            <th>Prescribing Doctor</th>
+            <th>Issue Date</th>
+            <th>Expiration Date</th>
+            <th>Refills Remaining</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="prescription : ${prescriptions}">
+            <td th:text="${prescription.id}"></td>
+            <td>
+                <ul>
+                    <li th:each="med : ${prescription.medications}" th:text="${med.name}"></li>
+                </ul>
+                <span th:if="${#lists.isEmpty(prescription.medications)}">No medications assigned</span>
+            </td>
+            <td th:text="${prescription.dosage}"></td>
+            <td th:text="${prescription.refillable ? 'Yes' : 'No'}"></td>
+            <td th:text="${prescription.prescribingDoctor}"></td>
+            <td th:text="${prescription.issueDate}"></td>
+            <td th:text="${prescription.expirationDate}"></td>
+            <td th:text="${prescription.refillsRemaining}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="back-button">
+        <button><a href="/">Back to Home</a></button>
+    </div>
+</div>
+</body>
+</html>

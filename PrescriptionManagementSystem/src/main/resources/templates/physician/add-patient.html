@@ -2,14 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Add Patient</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-<h1>Add New Patient</h1>
-<form th:action="@{/physician/add-patient}" th:object="${patient}" method="post">
-  <label>Name: <input type="text" th:field="*{name}" /></label><br/>
-  <label>Phone: <input type="text" th:field="*{phoneNumber}" /></label><br/>
-  <button type="submit">Add Patient</button>
-</form>
+<div class="pane">
+  <h1>Add Patient</h1>
+  <form action="#" th:action="@{/patient/add}" th:object="${patient}" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" th:field="*{name}" required />
+
+    <label for="phone">Phone Number:</label>
+    <input type="text" id="phone" th:field="*{phoneNumber}" required />
+
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" th:field="*{dateOfBirth}" required />
+
+    <label for="insuranceProvider">Insurance Provider:</label>
+    <input type="text" id="insuranceProvider" th:field="*{insuranceProvider}" />
+
+    <label for="policyNumber">Insurance Policy Number:</label>
+    <input type="text" id="policyNumber" th:field="*{insurancePolicyNumber}" />
+
+    <button type="submit">Add Patient</button>
+  </form>
+  <button><a href="/physician">Back to Home</a></button>
+</div>
 </body>
 </html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Pharmacist Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script>
+      function showDispenseSuccess() {
+          alert("Medicine successfully dispensed!");
+      }
+  </script>
+</head>
+<body>
+<div class="pane">
+  <h1>Pharmacist Prescription List</h1>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Medications</th>
+      <th>Dosage</th>
+      <th>Refillable</th>
+      <th>Prescribing Doctor</th>
+      <th>Issue Date</th>
+      <th>Expiration Date</th>
+      <th>Refills Remaining</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="prescription : ${prescriptions}">
+      <td th:text="${prescription.id}"></td>
+      <td>
+        <ul>
+          <li th:each="med : ${prescription.medications}" th:text="${med.name}"></li>
+        </ul>
+        <span th:if="${#lists.isEmpty(prescription.medications)}">No medications assigned</span>
+      </td>
+      <td th:text="${prescription.dosage}"></td>
+      <td th:text="${prescription.refillable ? 'Yes' : 'No'}"></td>
+      <td th:text="${prescription.prescribingDoctor}"></td>
+      <td th:text="${prescription.issueDate}"></td>
+      <td th:text="${prescription.expirationDate}"></td>
+      <td th:text="${prescription.refillsRemaining}"></td>
+      <td>
+        <form th:action="@{/dispense/{id}(id=${prescription.id})}" method="post" onsubmit="showDispenseSuccess()">
+          <button type="submit">Dispense</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="sidebar">
+    <button><a href="/">Back to Home</a></button>
+    <button><a href="/pharmacist/generic-substitutes">View Generic Substitutes</a></button>
+  </div>
+</div>
+</body>
+</html>

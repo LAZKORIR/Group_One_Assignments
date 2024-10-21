@@ -1,15 +1,17 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.controller;
 
+import com.goupone.prescription.system.prescriptionmanagementystem.entity.PrescriptionEntity;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.PrescriptionRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
-@RequestMapping("/patient")
+//@RequestMapping("/patient")
 public class PatientController {
 
     @Autowired
@@ -31,8 +33,9 @@ public class PatientController {
 
     @GetMapping("/patient")
     public String viewPrescriptionHistory(Model model) {
-        model.addAttribute("prescriptions", prescriptionService.getPrescriptionHistoryByPatient("John Doe"));
-        return "patient/home";  // Redirect to the home page view for patients
+        List<PrescriptionEntity> prescriptions = prescriptionService.getAllPrescriptions();
+        model.addAttribute("prescriptions", prescriptions);
+        return "patient/patientHomePage";  // Redirect to the home page view for patients
     }
 
 }

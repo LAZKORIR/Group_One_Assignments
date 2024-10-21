@@ -1,16 +1,82 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <title>Home - Prescription Management System</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Management System</title>
+
+    <style>
+        /* Reset some default styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Full page layout */
+        body {
+            height: 100vh; /* Full screen height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        /* Centered pane container */
+        .pane {
+            width: 600px;
+            max-width: 90%; /* Adjust for smaller screens */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
 </head>
 <body>
-<h1>Welcome to the Prescription Management System</h1>
-<div class="nav-buttons">
-    <button onclick="location.href='/physician'">Physicians</button>
-    <button onclick="location.href='/patient'">Patients</button>
-    <button onclick="location.href='/pharmacist'">Pharmacists</button>
+<div class="pane">
+    <h1>Prescription Management System</h1>
+    <p>Welcome! Please choose one of the options below to continue.</p>
+
+    <div class="button-container">
+        <button><a href="/patient">Manage Patients</a></button>
+        <button><a href="/physician">Manage Physicians</a></button>
+        <button><a href="/pharmacist">Manage Pharmacists</a></button>
+    </div>
 </div>
 </body>
-
 </html>

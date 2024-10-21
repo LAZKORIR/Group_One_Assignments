@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Prescribe Medicine</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script>
+        function showPrescribeSuccess() {
+            alert("Prescription successfully added!");
+        }
+    </script>
+</head>
+<body>
+<div class="pane">
+  <h1>Prescribe Medicine</h1>
+  <form action="#" th:action="@{/physician/prescribe}" th:object="${prescription}" method="post" onsubmit="showPrescribeSuccess()">
+
+    <label for="patient">Select Patient:</label>
+    <select id="patient" th:field="*{patient.id}" required>
+      <option th:each="patient : ${patients}"
+              th:value="${patient.id}"
+              th:text="${patient.name}"></option>
+    </select>
+
+    <label for="medications">Select Medications:</label>
+    <select id="medications" th:field="*{medications}" multiple required>
+      <option th:each="med : ${medications}"
+              th:value="${med.id}"
+              th:text="${med.name}"></option>
+    </select>
+
+    <label for="dosage">Dosage:</label>
+    <input type="text" id="dosage" th:field="*{dosage}" required />
+
+    <button type="submit">Prescribe</button>
+  </form>
+
+  <div class="back-button">
+    <button><a href="/physician">Back to Dashboard</a></button>
+  </div>
+</div>
+</body>
+</html>
