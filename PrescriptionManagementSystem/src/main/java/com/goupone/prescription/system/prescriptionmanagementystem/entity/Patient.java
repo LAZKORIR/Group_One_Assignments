@@ -21,7 +21,7 @@ public class Patient {
     private String insurancePolicyNumber;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<Prescription> prescriptions = new ArrayList<>();
+    private List<PrescriptionEntity> prescriptionEntities = new ArrayList<>();
 
 }
 

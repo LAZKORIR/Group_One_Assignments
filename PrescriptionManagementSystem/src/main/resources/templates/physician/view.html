@@ -7,8 +7,8 @@
 <h1 th:text="'Physician: ' + ${physician.name}"></h1>
 <p>Phone: <span th:text="${physician.phoneNumber}"></span></p>
 <ul>
-  <li th:each="prescription : ${physician.prescriptions}">
-    <span th:text="'Prescription ID: ' + ${prescription.id}"></span>
+  <li th:each="prescriptionEntity : ${physician.prescriptionEntities}">
+    <span th:text="'Prescription ID: ' + ${prescriptionEntity.id}"></span>
   </li>
 </ul>
 <button onclick="window.location.href='/physician'">Back to Physicians</button>

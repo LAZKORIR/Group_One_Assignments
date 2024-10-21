@@ -8,11 +8,11 @@
 		<version>3.3.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.goupone.prescription.system</groupId>
+	<groupId>com.goupone.prescriptionEntity.system</groupId>
 	<artifactId>PrescriptionManagementSystem</artifactId>
 	<version>1.0</version>
 	<name>PrescriptionManagementSystem</name>
-	<description>Springboot project for prescription management system</description>
+	<description>Springboot project for prescriptionEntity management system</description>
 	<url/>
 	<licenses>
 		<license/>

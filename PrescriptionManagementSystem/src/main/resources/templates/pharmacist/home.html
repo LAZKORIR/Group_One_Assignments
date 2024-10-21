@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Pharmacist Home</title>
+</head>
+<body>
+<h1>Prescriptions for Dispensing</h1>
+<ul>
+  <th:block th:each="prescriptionEntity : ${prescriptionEntities}">
+    <li th:text="'Prescription ID: ' + ${prescriptionEntity.prescriptionID}"></li>
+  </th:block>
+</ul>
+<a href="/check-refill">Check Refill</a> | <a href="/">Home</a>
+</body>
+</html>

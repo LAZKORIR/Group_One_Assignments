@@ -15,9 +15,9 @@ public class Physician {
 
     private String name;
 
-    // One physician can write many prescriptions
+    // One physician can write many prescriptionEntities
     @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
-    private List<Prescription> prescriptions = new ArrayList<>();
+    private List<PrescriptionEntity> prescriptionEntities = new ArrayList<>();
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -26,8 +26,8 @@ public class Physician {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public List<Prescription> getPrescriptions() { return prescriptions; }
-    public void setPrescriptions(List<Prescription> prescriptions) { this.prescriptions = prescriptions; }
+    public List<PrescriptionEntity> getPrescriptionEntities() { return prescriptionEntities; }
+    public void setPrescriptionEntities(List<PrescriptionEntity> prescriptionEntities) { this.prescriptionEntities = prescriptionEntities; }
 }
 
 

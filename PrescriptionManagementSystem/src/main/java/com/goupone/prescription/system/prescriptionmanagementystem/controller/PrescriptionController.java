@@ -1,7 +1,7 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.controller;
 
 
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.Prescription;
+import com.goupone.prescription.system.prescriptionmanagementystem.entity.PrescriptionEntity;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.PatientRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.PrescriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +20,16 @@ public class PrescriptionController {
 
     @GetMapping("/add/{patientId}")
     public String showAddPrescriptionForm(@PathVariable Long patientId, Model model) {
-        Prescription prescription = new Prescription();
-        prescription.setPatient(patientRepository.findById(patientId).orElse(null));
-        model.addAttribute("prescription", prescription);
-        return "prescription/add";
+        PrescriptionEntity prescriptionEntity = new PrescriptionEntity();
+        prescriptionEntity.setPatient(patientRepository.findById(patientId).orElse(null));
+        model.addAttribute("prescriptionEntity", prescriptionEntity);
+        return "prescriptionEntity/add";
     }
 
     @PostMapping("/add")
-    public String addPrescription(@ModelAttribute Prescription prescription) {
-        prescriptionRepository.save(prescription);
-        return "redirect:/patient/" + prescription.getPatient().getId();
+    public String addPrescription(@ModelAttribute PrescriptionEntity prescriptionEntity) {
+        prescriptionRepository.save(prescriptionEntity);
+        return "redirect:/patient/" + prescriptionEntity.getPatient().getId();
     }
 }
 

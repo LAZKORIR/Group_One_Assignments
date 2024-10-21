@@ -1,27 +1,18 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.service;
 
 
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.Patient;
-import com.goupone.prescription.system.prescriptionmanagementystem.repository.PatientRepository;
+import com.goupone.prescription.system.prescriptionmanagementystem.model.Prescription;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PrescriptionService {
+public interface PrescriptionService {
 
-    private final PatientRepository patientRepository;
+                List<Prescription> getPrescriptionsByPhysician(String physicianName);
+                List<Prescription> getPrescriptionHistoryByPatient(String patientName);
+                List<Prescription> getPrescriptionsForPharmacist();
 
-    public PrescriptionService(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
-    }
 
-    public List<Patient> getAllCustomers() {
-        return patientRepository.findAll();
-    }
-
-    public Patient getCustomerById(Long id) {
-        return patientRepository.findById(id).orElse(null);
-    }
 }
 

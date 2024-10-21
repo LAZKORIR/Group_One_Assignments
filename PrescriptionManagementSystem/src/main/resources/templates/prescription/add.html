@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Add Prescription</h1>
-<form th:action="@{/prescription/add}" th:object="${prescription}" method="post">
+<form th:action="@{/prescriptionEntity/add}" th:object="${prescriptionEntity}" method="post">
     <label>Medication: <input type="text" th:field="*{medication}" /></label><br/>
     <label>Dosage: <input type="text" th:field="*{dosage}" /></label><br/>
     <label>Refillable: <input type="checkbox" th:field="*{refillable}" /></label><br/>

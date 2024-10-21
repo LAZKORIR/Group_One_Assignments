@@ -7,10 +7,10 @@
 <body>
 <h1>Prescriptions</h1>
 <ul>
-    <li th:each="prescription : ${prescriptions}">
-        <span th:text="${prescription.medication}"></span> -
-        <button th:if="${prescription.refillable}"
-                th:onclick="'/pharmacist/dispense/' + ${prescription.id}">
+    <li th:each="prescriptionEntity : ${prescriptionEntities}">
+        <span th:text="${prescriptionEntity.medication}"></span> -
+        <button th:if="${prescriptionEntity.refillable}"
+                th:onclick="'/pharmacist/dispense/' + ${prescriptionEntity.id}">
             Dispense
         </button>
     </li>

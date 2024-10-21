@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Prescription {
+public class PrescriptionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,9 +28,9 @@ public class Prescription {
     private Physician physician;
 
     // Constructors, Getters, and Setters
-    public Prescription() {}
+    public PrescriptionEntity() {}
 
-    public Prescription(String medication, String dosage, boolean refillable, Patient patient) {
+    public PrescriptionEntity(String medication, String dosage, boolean refillable, Patient patient) {
         this.medication = medication;
         this.dosage = dosage;
         this.refillable = refillable;
