@@ -15,7 +15,6 @@ public class Medication {
     private String name;
     private String unit;
     private String sideEffects;
-    @Column(nullable = false)
     private boolean genericAvailable = false;
 
     public  Medication(String name,String unit,String sideEffects,boolean genericAvailable){

@@ -34,21 +34,21 @@ public class DataLoader {
 
             // Create a Patient
             Patient patient = new Patient();
-            patient.setName("John Doe");
+            patient.setName("Alvin Kabwama");
             patient.setPhoneNumber("555-1234");
             patient.setDateOfBirth(LocalDate.of(1985, 5, 15));
-            patient.setInsuranceProvider("HealthInsuranceCorp");
+            patient.setInsuranceProvider("Cigna");
             patient.setInsurancePolicyNumber("H12345");
             patientRepo.save(patient);
 
             // Create a Physician
             Physician physician = new Physician();
-            physician.setName("Dr. Smith");
+            physician.setName("Dr. Alyssa");
             physicianRepo.save(physician);
 
             // Create a Prescription
             PrescriptionEntity prescription = new PrescriptionEntity(
-                    "500mg, twice a day", true, "Dr. Smith", "555-5678",
+                    "500mg, twice a day", true, "Dr. Alyssa", "555-5678",
                     LocalDate.now(), LocalDate.now().plusMonths(6), 2, 30,
                     true, patient, physician, List.of(med1, med2)
             );

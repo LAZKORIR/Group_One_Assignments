@@ -43,7 +43,7 @@
       <td th:text="${prescription.expirationDate}"></td>
       <td th:text="${prescription.refillsRemaining}"></td>
       <td>
-        <form th:action="@{/dispense/{id}(id=${prescription.id})}" method="post" onsubmit="showDispenseSuccess()">
+        <form th:action="@{/pharmacist/dispense/{id}(id=${prescription.id})}" method="post" onsubmit="showDispenseSuccess()">
           <button type="submit">Dispense</button>
         </form>
       </td>
@@ -53,7 +53,7 @@
 
   <div class="sidebar">
     <button><a href="/">Back to Home</a></button>
-    <button><a href="/pharmacist/generic-substitutes">View Generic Substitutes</a></button>
+    <button><a href="/pharmacist/generic-substitutes/1">View Generic Substitutes</a></button>
   </div>
 </div>
 </body>

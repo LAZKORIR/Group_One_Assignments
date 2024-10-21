@@ -54,7 +54,7 @@ public class PharmacistController {
             prescription.setRefillsRemaining(prescription.getRefillsRemaining() - 1);
             prescriptionRepository.save(prescription);
         }
-        return "redirect:/pharmacist/pharmacistHomePage";
+        return "redirect:/pharmacist";
     }
 
     @GetMapping("/pharmacist/generic-substitutes/{id}")

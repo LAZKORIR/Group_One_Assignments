@@ -34,7 +34,7 @@ public class PrescriptionEntity {
     private Patient patient;
 
     // Many-to-One with Physician
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)  // Eager fetching ensures it is available
     @JoinColumn(name = "physician_id", nullable = false)
     private Physician physician;
 

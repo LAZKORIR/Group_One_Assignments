@@ -7,7 +7,7 @@
 <body>
 <div class="pane">
   <h1>Add Patient</h1>
-  <form action="#" th:action="@{/patient/add}" th:object="${patient}" method="post">
+  <form action="#" th:action="@{/physician/add}" th:object="${patient}" method="post">
     <label for="name">Name:</label>
     <input type="text" id="name" th:field="*{name}" required />
 

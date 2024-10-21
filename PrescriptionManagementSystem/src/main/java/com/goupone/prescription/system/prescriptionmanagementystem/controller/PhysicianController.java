@@ -2,9 +2,11 @@ package com.goupone.prescription.system.prescriptionmanagementystem.controller;
 
 import com.goupone.prescription.system.prescriptionmanagementystem.entity.Medication;
 import com.goupone.prescription.system.prescriptionmanagementystem.entity.Patient;
+import com.goupone.prescription.system.prescriptionmanagementystem.entity.Physician;
 import com.goupone.prescription.system.prescriptionmanagementystem.entity.PrescriptionEntity;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.MedicationRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.PatientRepository;
+import com.goupone.prescription.system.prescriptionmanagementystem.repository.PhysicianRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.PrescriptionRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class PhysicianController {
     @Autowired
     PrescriptionRepository prescriptionRepository;
 
+    @Autowired
+    PhysicianRepository physicianRepository;
+
     public PhysicianController(PrescriptionService prescriptionService) {
         this.prescriptionService = prescriptionService;
     }
@@ -53,7 +58,7 @@ public class PhysicianController {
     @PostMapping("/physician/add")
     public String addPatient(@ModelAttribute Patient patient) {
         patientRepository.save(patient);  // Save patient to the database
-        return "redirect:/physician/physicianHomePage";  // Redirect back to the patient dashboard
+        return "redirect:/physician";  // Redirect back to the patient dashboard
     }
 
 
@@ -65,14 +70,35 @@ public class PhysicianController {
         return "physician/prescribe-medicine";
     }
 
-    @PostMapping("/prescribe")
-    public String prescribeMedicine(@ModelAttribute PrescriptionEntity prescription,
-                                    @RequestParam List<Long> medications) {
+    @PostMapping("/physician/prescribe")
+    public String prescribeMedicine(
+            @ModelAttribute PrescriptionEntity prescription,
+            @RequestParam Long patientId,
+            @RequestParam List<Long> medications,
+            Model model) {
+
+        // Fetch the patient and medications from the database
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
         List<Medication> selectedMedications = medicationRepository.findAllById(medications);
+
+        // Set the relationships
+        prescription.setPatient(patient);
         prescription.setMedications(selectedMedications);
+
+        // Assign the currently logged-in physician (for now, assuming Physician with ID=1)
+        Physician physician = physicianRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Physician not found"));
+        System.out.println("physician =="+physician);
+        prescription.setPhysician(physician);  // This is the missing piece!
+
+        // Save the prescription
         prescriptionRepository.save(prescription);
+
+        // Redirect to the physician dashboard
         return "redirect:/physician";
     }
+
 
 
 
