@@ -7,10 +7,14 @@ import com.goupone.prescription.system.prescriptionmanagementystem.repository.*;
 import com.goupone.prescription.system.prescriptionmanagementystem.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +138,71 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         return "redirect:/physician";
     }
 
+    @Override
+    public String dispensePrescription(Long id) {
+        PrescriptionEntity prescription = prescriptionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prescription not found"));
+
+        // Handle refillable prescriptions
+        if (prescription.isRefillable() && prescription.getRefillsRemaining() > 0) {
+            prescription.setRefillsRemaining(prescription.getRefillsRemaining() - 1);
+
+            // If at least one has been dispensed, mark as partially dispensed
+            if (prescription.getRefillsRemaining() > 0) {
+                prescription.setDispensed(true);  // Mark as partially dispensed
+            } else {
+                // If no more refills, mark as fully dispensed
+                prescription.setDispensed(true);
+            }
+        } else if (!prescription.isRefillable()) {
+            // For non-refillable prescriptions, mark as dispensed
+            prescription.setDispensed(true);
+        } else {
+            throw new RuntimeException("No refills remaining.");
+        }
+
+        prescriptionRepository.save(prescription);
+        return "redirect:/pharmacist";
+    }
+
+    @Override
+    public String viewPrescriptions(Model model, Principal principal) {
+        User currentUser = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Patient patient = patientRepository.findByName(currentUser.getUsername())
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        List<PrescriptionEntity> prescriptions = prescriptionRepository.findByPatient(patient);
+        model.addAttribute("prescriptions", prescriptions);
+
+        return "patient/patientHomePage";
+    }
+
+    @Override
+    public String viewGenericSubstitutes(@PathVariable Long id, Model model) {
+        Medication medication = medicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Medication not found"));
+
+        List<Medication> genericSubstitutes = medication.getGenericSubstitutes();
+        model.addAttribute("medication", medication);
+        model.addAttribute("genericSubstitutes", genericSubstitutes);
+
+        return "pharmacist/generic-substitutes";
+    }
+
+    @Override
+    public String getPhysicianHomePage(Model model) {
+        // Fetch all prescriptions to display in the view
+        List<PrescriptionEntity> prescriptions = getAllPrescriptions();
+        model.addAttribute("prescriptions", prescriptions);
+        // Get the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();  // Get the logged-in username
+
+        // Add username to the model to display in the HTML
+        model.addAttribute("username", "Dr. "+username);
+        return "physician/physicianHomePage";  // Points to physician.html template
+    }
 
 }
 

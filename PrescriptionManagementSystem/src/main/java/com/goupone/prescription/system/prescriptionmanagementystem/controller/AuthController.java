@@ -53,11 +53,6 @@ public class AuthController {
         return "redirect:/users/login";
     }
 
-    // Handle unmatched URLs by redirecting to /login
-//    @RequestMapping("/**")
-//    public String handleUnknownPath() {
-//        return "redirect:/users/login";
-//    }
 
     @GetMapping("/auth/register")
     public String showRegistrationForm(Model model) {
