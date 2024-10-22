@@ -3,7 +3,6 @@
 <head>
   <title>Pharmacist Dashboard</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
-
 </head>
 <body>
 
@@ -23,7 +22,7 @@
       <th>Issue Date</th>
       <th>Refills Remaining</th>
       <th>Refillable</th>
-      <th>Dispensed</th>
+      <th>Status</th>
       <th>Actions</th>
     </tr>
     </thead>
@@ -35,10 +34,18 @@
       <td th:text="${prescription.issueDate}"></td>
       <td th:text="${prescription.refillsRemaining}"></td>
       <td th:text="${prescription.refillable ? 'Yes' : 'No'}"></td>
-      <td th:text="${prescription.dispensed ? 'Yes' : 'No'}"></td>
+
+      <!-- Display Status -->
+      <td th:text="${prescription.dispensed
+                      ? (prescription.refillsRemaining > 0 ? 'Partially Dispensed' : 'Fully Dispensed')
+                      : 'Not Dispensed'}">
+      </td>
+
+      <!-- Action Buttons -->
       <td>
-        <form th:action="@{/pharmacist/dispense/{id}(id=${prescription.id})}" method="post">
-          <button type="submit" th:disabled="${prescription.dispensed}">Dispense</button>
+        <form th:action="@{/pharmacist/dispense/{id}(id=${prescription.id})}" method="post"
+              th:if="${prescription.refillable and prescription.refillsRemaining > 0}">
+          <button type="submit">Dispense</button>
         </form>
         <a th:href="@{/pharmacist/generic-substitutes/{id}(id=${prescription.medication.id})}">
           View Substitutes
@@ -54,20 +61,16 @@
 </div>
 
 <script>
-    function showDispenseSuccess() {
-      alert("Medicine successfully dispensed!");
-    }
-
     function searchPrescriptions() {
-      let input = document.getElementById('search').value.toLowerCase();
-      let rows = document.querySelectorAll('#prescriptionTable tbody tr');
+      const input = document.getElementById('search').value.toLowerCase();
+      const rows = document.querySelectorAll('#prescriptionTable tbody tr');
 
       rows.forEach(row => {
-        let patientName = row.cells[1].textContent.toLowerCase();
+        const patientName = row.cells[1].textContent.toLowerCase();
         row.style.display = patientName.includes(input) ? '' : 'none';
       });
     }
-  </script>
+</script>
 
 </body>
 </html>

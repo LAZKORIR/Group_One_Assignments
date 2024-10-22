@@ -20,7 +20,7 @@ public class PrescriptionEntity {
     private Medication medication;
 
     private String dosage;
-    private boolean refillable;
+    private boolean refillable=false;
     private String prescribingDoctor;
     private String doctorPhoneNumber;
     private LocalDate issueDate;

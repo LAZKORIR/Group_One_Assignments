@@ -57,11 +57,38 @@ public class PharmacistController {
 //        return "redirect:/pharmacist";
 //    }
 
+//    @PostMapping("/pharmacist/dispense/{id}")
+//    public String dispensePrescription(@PathVariable Long id) {
+//        PrescriptionEntity prescription = prescriptionRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Prescription not found"));
+//        prescription.setDispensed(true);
+//        prescriptionRepository.save(prescription);
+//        return "redirect:/pharmacist";
+//    }
+
     @PostMapping("/pharmacist/dispense/{id}")
     public String dispensePrescription(@PathVariable Long id) {
         PrescriptionEntity prescription = prescriptionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prescription not found"));
-        prescription.setDispensed(true);
+
+        // Handle refillable prescriptions
+        if (prescription.isRefillable() && prescription.getRefillsRemaining() > 0) {
+            prescription.setRefillsRemaining(prescription.getRefillsRemaining() - 1);
+
+            // If at least one has been dispensed, mark as partially dispensed
+            if (prescription.getRefillsRemaining() > 0) {
+                prescription.setDispensed(true);  // Mark as partially dispensed
+            } else {
+                // If no more refills, mark as fully dispensed
+                prescription.setDispensed(true);
+            }
+        } else if (!prescription.isRefillable()) {
+            // For non-refillable prescriptions, mark as dispensed
+            prescription.setDispensed(true);
+        } else {
+            throw new RuntimeException("No refills remaining.");
+        }
+
         prescriptionRepository.save(prescription);
         return "redirect:/pharmacist";
     }
