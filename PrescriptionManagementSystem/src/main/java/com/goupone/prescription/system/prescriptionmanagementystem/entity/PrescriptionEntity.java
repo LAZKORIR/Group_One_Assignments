@@ -2,6 +2,8 @@ package com.goupone.prescription.system.prescriptionmanagementystem.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
 import java.time.LocalDate;
 
 @Entity
@@ -14,6 +16,7 @@ public class PrescriptionEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)  // Relationship to Medication entity
     @JoinColumn(name = "medication_id", nullable = false)
+    @ToString.Exclude
     private Medication medication;
 
     private String dosage;
@@ -28,9 +31,11 @@ public class PrescriptionEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "physician_id", nullable = false)
+    @ToString.Exclude
     private Physician physician;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 

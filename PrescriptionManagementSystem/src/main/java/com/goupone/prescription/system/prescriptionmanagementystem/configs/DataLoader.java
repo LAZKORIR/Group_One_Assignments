@@ -39,7 +39,7 @@ public class DataLoader implements CommandLineRunner {
 
         // 2. Create Admin Physician User
         Physician adminPhysician = new Physician();
-        adminPhysician.setUsername("admin");
+        adminPhysician.setUsername("Lazarus");
         adminPhysician.setPassword(passwordEncoder.encode("admin123"));
         adminPhysician.addRole(physicianRole);  // Attach role to the physician
 

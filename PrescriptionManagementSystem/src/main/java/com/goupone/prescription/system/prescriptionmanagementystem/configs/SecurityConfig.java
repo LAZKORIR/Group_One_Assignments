@@ -19,9 +19,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/css/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/login", "/css/**", "/js/**", "/h2-console/**").permitAll()
                         .requestMatchers("/auth/register").hasRole("PHYSICIAN")
                         .requestMatchers("/physician/**").hasRole("PHYSICIAN")
+                        .requestMatchers("/pharmacist/**").hasRole("PHARMACIST")
+                        .requestMatchers("/patient/**").hasRole("PATIENT")
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions().sameOrigin()) // Allow H2 iframe access

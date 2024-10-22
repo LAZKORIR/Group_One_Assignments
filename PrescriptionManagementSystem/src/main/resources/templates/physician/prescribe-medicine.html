@@ -2,24 +2,28 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Prescribe Medicine</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
   <script>
-        function showPrescribeSuccess() {
-            alert("Prescription successfully added!");
-        }
-    </script>
+    // Show success message when redirected from successful prescription
+    function showPrescribeSuccess() {
+      alert("Prescription successfully added!");
+    }
+  </script>
 </head>
 <body>
 <div class="pane">
   <h1>Prescribe Medicine</h1>
-  <form action="#" th:action="@{/physician/prescribe}" method="post">
-    <label for="patient">Select Patient:</label>
-    <select id="patient" name="patientId" required>
+
+  <form th:action="@{/physician/prescribe}" method="post" onsubmit="showPrescribeSuccess()">
+    <!-- Select Patient -->
+    <label for="patientId">Select Patient:</label>
+    <select id="patientId" name="patientId" required>
       <option th:each="patient : ${patients}"
               th:value="${patient.id}"
               th:text="${patient.name}"></option>
     </select>
 
+    <!-- Select Medications -->
     <label for="medications">Select Medications:</label>
     <select id="medications" name="medications" multiple required>
       <option th:each="med : ${medications}"
@@ -27,16 +31,20 @@
               th:text="${med.name}"></option>
     </select>
 
+    <!-- Dosage -->
     <label for="dosage">Dosage:</label>
-    <input type="text" name="dosage" required />
+    <input type="text" id="dosage" name="dosage" placeholder="e.g., 1 tablet twice daily" required />
 
-    <button type="submit">Prescribe</button>
+    <!-- Back to Dashboard Button -->
+    <div class="action">
+      <!-- Submit Button -->
+      <button class="action-btn" type="submit">Prescribe</button>
+      <button class="action-btn" onclick="location.href='/physician'">Back to Dashboard</button>
+    </div>
+
   </form>
 
 
-  <div class="back-button">
-    <button><a href="/physician">Back to Dashboard</a></button>
-  </div>
 </div>
 </body>
 </html>

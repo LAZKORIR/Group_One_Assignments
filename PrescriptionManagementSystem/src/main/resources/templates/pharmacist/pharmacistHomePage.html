@@ -10,6 +10,11 @@
   </script>
 </head>
 <body>
+
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Search by patient name" oninput="searchPrescriptions()" />
+</div>
+
 <div class="pane">
   <h1>Pharmacist Prescription List</h1>
 
@@ -35,9 +40,22 @@
   </table>
 
   <div class="actions">
-    <button><a href="/pharmacist/generic-substitutes/1">View Generic Substitutes</a></button>
-    <button><a href="/login">Logout</a></button>
+    <button class="action-btn" onclick="location.href='/pharmacist/generic-substitutes/1'">View Generic Substitutes</button>
+    <button class="action-btn" onclick="location.href='/login">Logout</button>
   </div>
 </div>
+
+<script>
+    function searchPrescriptions() {
+        let input = document.getElementById('search').value.toLowerCase();
+        let rows = document.querySelectorAll('#prescriptionTable tbody tr');
+
+        rows.forEach(row => {
+            let patientName = row.cells[1].textContent.toLowerCase();
+            row.style.display = patientName.includes(input) ? '' : 'none';
+        });
+    }
+</script>
+
 </body>
 </html>

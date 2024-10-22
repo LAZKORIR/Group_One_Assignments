@@ -1,8 +1,5 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.controller;
 
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.Medication;
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.Patient;
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.Physician;
 import com.goupone.prescription.system.prescriptionmanagementystem.entity.PrescriptionEntity;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.MedicationRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.PatientRepository;
@@ -10,10 +7,11 @@ import com.goupone.prescription.system.prescriptionmanagementystem.repository.Ph
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.PrescriptionRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -46,19 +44,13 @@ public class PhysicianController {
         // Fetch all prescriptions to display in the view
         List<PrescriptionEntity> prescriptions = prescriptionService.getAllPrescriptions();
         model.addAttribute("prescriptions", prescriptions);
+        // Get the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();  // Get the logged-in username
+
+        // Add username to the model to display in the HTML
+        model.addAttribute("username", "Dr. "+username);
         return "physician/physicianHomePage";  // Points to physician.html template
-    }
-
-    @GetMapping("/physician/add")
-    public String showAddPatientForm(Model model) {
-        model.addAttribute("patient", new Patient());  // Empty patient object for the form
-        return "physician/add-patient";  // Render the add-patient.html view
-    }
-
-    @PostMapping("/physician/add")
-    public String addPatient(@ModelAttribute Patient patient) {
-        patientRepository.save(patient);  // Save patient to the database
-        return "redirect:/physician";  // Redirect back to the patient dashboard
     }
 
 
@@ -72,32 +64,14 @@ public class PhysicianController {
 
     @PostMapping("/physician/prescribe")
     public String prescribeMedicine(
-            @ModelAttribute PrescriptionEntity prescription,
             @RequestParam Long patientId,
             @RequestParam List<Long> medications,
-            Model model) {
+            @RequestParam String dosage) {
 
-        // Fetch the patient and medications from the database
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
-        List<Medication> selectedMedications = medicationRepository.findAllById(medications);
-
-        // Set the relationships
-        prescription.setPatient(patient);
-        //prescription.setMedication(selectedMedications);
-
-        // Assign the currently logged-in physician (for now, assuming Physician with ID=1)
-        Physician physician = physicianRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("Physician not found"));
-        System.out.println("physician =="+physician);
-        //prescription.setPhysician(physician);  // This is the missing piece!
-
-        // Save the prescription
-        prescriptionRepository.save(prescription);
-
-        // Redirect to the physician dashboard
-        return "redirect:/physician";
+        return prescriptionService.prescribeMedicine(patientId,medications,dosage);
     }
+
+
 
 
 

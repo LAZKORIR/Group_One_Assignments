@@ -6,7 +6,7 @@
 </head>
 <body>
 <div class="pane">
-    <h1>Welcome, Physician</h1>
+    <h1>Welcome, <span th:text="${username}">Physician</span></h1>
 
     <div class="actions">
         <button class="action-btn" onclick="location.href='/physician/prescribe'">Prescribe Medicine</button>
