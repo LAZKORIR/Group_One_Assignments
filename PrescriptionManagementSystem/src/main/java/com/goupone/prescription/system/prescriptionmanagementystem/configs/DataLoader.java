@@ -1,60 +1,100 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.configs;
 
-
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.Medication;
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.Patient;
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.Physician;
-import com.goupone.prescription.system.prescriptionmanagementystem.entity.PrescriptionEntity;
-import com.goupone.prescription.system.prescriptionmanagementystem.repository.MedicationRepository;
-import com.goupone.prescription.system.prescriptionmanagementystem.repository.PatientRepository;
-import com.goupone.prescription.system.prescriptionmanagementystem.repository.PhysicianRepository;
-import com.goupone.prescription.system.prescriptionmanagementystem.repository.PrescriptionRepository;
+import com.goupone.prescription.system.prescriptionmanagementystem.entity.*;
+import com.goupone.prescription.system.prescriptionmanagementystem.repository.*;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Component
-public class DataLoader {
+public class DataLoader implements CommandLineRunner {
 
-    @Bean
-    CommandLineRunner runner(
-            PatientRepository patientRepo,
-            PhysicianRepository physicianRepo,
-            MedicationRepository medicationRepo,
-            PrescriptionRepository prescriptionRepo) {
-        return args -> {
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PatientRepository patientRepository;
+    private final MedicationRepository medicationRepository;
+    private final PrescriptionRepository prescriptionRepository;
+    private final PasswordEncoder passwordEncoder;
 
-            // Create Medications
-            Medication med1 = new Medication("Amoxicillin", "500mg", "Nausea, Headache", true);
-            Medication med2 = new Medication("Ibuprofen", "200mg", "Dizziness, Upset Stomach", false);
-            medicationRepo.saveAll(List.of(med1, med2));
+    public DataLoader(UserRepository userRepository, RoleRepository roleRepository,
+                      PatientRepository patientRepository, MedicationRepository medicationRepository,
+                      PrescriptionRepository prescriptionRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.patientRepository = patientRepository;
+        this.medicationRepository = medicationRepository;
+        this.prescriptionRepository = prescriptionRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-            // Create a Patient
-            Patient patient = new Patient();
-            patient.setName("Alvin Kabwama");
-            patient.setPhoneNumber("555-1234");
-            patient.setDateOfBirth(LocalDate.of(1985, 5, 15));
-            patient.setInsuranceProvider("Cigna");
-            patient.setInsurancePolicyNumber("H12345");
-            patientRepo.save(patient);
+    @Override
+    public void run(String... args) throws Exception {
+        // 1. Load Roles
+        Role physicianRole = roleRepository.findByName("ROLE_PHYSICIAN")
+                .orElseGet(() -> roleRepository.save(new Role("ROLE_PHYSICIAN")));
 
-            // Create a Physician
-            Physician physician = new Physician();
-            physician.setName("Dr. Alyssa");
-            physicianRepo.save(physician);
+        Role pharmacistRole = roleRepository.findByName("ROLE_PHARMACIST")
+                .orElseGet(() -> roleRepository.save(new Role("ROLE_PHARMACIST")));
 
-            // Create a Prescription
-            PrescriptionEntity prescription = new PrescriptionEntity(
-                    "500mg, twice a day", true, "Dr. Alyssa", "555-5678",
-                    LocalDate.now(), LocalDate.now().plusMonths(6), 2, 30,
-                    true, patient, physician, List.of(med1, med2)
-            );
+        Role patientRole = roleRepository.findByName("ROLE_PATIENT")
+                .orElseGet(() -> roleRepository.save(new Role("ROLE_PATIENT")));
 
-            // Save Prescription
-            prescriptionRepo.save(prescription);
-        };
+        // 2. Create an Admin Physician User
+
+        // Create a physician with encoded password
+        Physician adminPhysician = new Physician();
+        adminPhysician.setUsername("admin");
+        adminPhysician.setPassword(passwordEncoder.encode("admin123")); // Ensure BCrypt encoding
+        adminPhysician.addRole(physicianRole);
+        userRepository.save(adminPhysician);
+
+        System.out.println("Admin physician created: Username='admin', Password='admin123'");
+
+        // 3. Create a Sample Patient
+        Patient patient = patientRepository.findByName("John Doe")
+                .orElseGet(() -> {
+                    Patient newPatient = new Patient();
+                    newPatient.setName("John Doe");
+                    newPatient.setPhoneNumber("123-456-7890");
+                    newPatient.setDateOfBirth(LocalDate.of(1990, 1, 1));
+                    newPatient.setInsuranceProvider("Good Health");
+                    newPatient.setInsurancePolicyNumber("GH12345678");
+                    return patientRepository.save(newPatient);
+                });
+
+        // 4. Create Sample Medication
+        Medication medication = medicationRepository.findByName("Paracetamol")
+                .orElseGet(() -> {
+                    Medication newMedication = new Medication();
+                    newMedication.setName("Paracetamol");
+                    newMedication.setUnit("500 mg");
+                    newMedication.setSideEffects("Nausea, Drowsiness");
+                    newMedication.setGenericAvailable(true);
+                    return medicationRepository.save(newMedication);
+                });
+
+
+       //5.  Create a Sample Prescription
+        PrescriptionEntity prescription = new PrescriptionEntity();
+        prescription.setMedication(medication);
+        prescription.setDosage("1 tablet twice a day");
+        prescription.setRefillable(true);
+        prescription.setPrescribingDoctor("Dr. Admin");
+        prescription.setDoctorPhoneNumber("987-654-3210");
+        prescription.setIssueDate(LocalDate.now());
+        prescription.setExpirationDate(LocalDate.now().plusMonths(6));
+        prescription.setRefillsRemaining(2);
+        prescription.setUnitsPerRefill(30);
+        prescription.setGenericAllowed(true);
+        prescription.setPhysician(adminPhysician);  // Assign the Physician
+        prescription.setPatient(patient);
+
+        prescriptionRepository.save(prescription);
+
+
+        // Save the prescription
+        prescriptionRepository.save(prescription);
     }
 }

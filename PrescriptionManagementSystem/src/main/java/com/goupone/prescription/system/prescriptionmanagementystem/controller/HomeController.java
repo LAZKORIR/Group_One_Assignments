@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
     @GetMapping("/")
     public String home() {
-        return "index";  // Renders index.html
+        return "users/login";  // Renders login by default
     }
 }
 

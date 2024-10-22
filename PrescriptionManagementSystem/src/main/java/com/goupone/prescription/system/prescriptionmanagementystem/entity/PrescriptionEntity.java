@@ -1,70 +1,53 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class PrescriptionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)  // Relationship to Medication entity
+    @JoinColumn(name = "medication_id", nullable = false)
+    private Medication medication;
+
     private String dosage;
     private boolean refillable;
-
     private String prescribingDoctor;
     private String doctorPhoneNumber;
     private LocalDate issueDate;
     private LocalDate expirationDate;
     private int refillsRemaining;
     private int unitsPerRefill;
-    private boolean isGenericAllowed;
+    private boolean genericAllowed;
 
-    // Many-to-One with Patient
-    @ManyToOne
-    @JoinColumn(name = "patient_id", nullable = false)
-    private Patient patient;
-
-    // Many-to-One with Physician
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)  // Eager fetching ensures it is available
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "physician_id", nullable = false)
     private Physician physician;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
 
-    // Relationship with Medications
-    @ManyToMany
-    @JoinTable(
-            name = "prescription_medications",
-            joinColumns = @JoinColumn(name = "prescription_id"),
-            inverseJoinColumns = @JoinColumn(name = "medication_id")
-    )
-    private List<Medication> medications = new ArrayList<>();
+    // Custom Getters and Setters (for clarity)
+    public Medication getMedication() {
+        return medication;
+    }
 
-    // Constructor
-    public PrescriptionEntity() {}
+    public void setMedication(Medication medication) {
+        this.medication = medication;
+    }
 
-    public PrescriptionEntity(String dosage, boolean refillable, String prescribingDoctor, String doctorPhoneNumber,
-                              LocalDate issueDate, LocalDate expirationDate, int refillsRemaining, int unitsPerRefill,
-                              boolean isGenericAllowed, Patient patient, Physician physician, List<Medication> medications) {
-        this.dosage = dosage;
-        this.refillable = refillable;
-        this.prescribingDoctor = prescribingDoctor;
-        this.doctorPhoneNumber = doctorPhoneNumber;
-        this.issueDate = issueDate;
-        this.expirationDate = expirationDate;
-        this.refillsRemaining = refillsRemaining;
-        this.unitsPerRefill = unitsPerRefill;
-        this.isGenericAllowed = isGenericAllowed;
-        this.patient = patient;
+    public Physician getPhysician() {
+        return physician;
+    }
+
+    public void setPhysician(Physician physician) {
         this.physician = physician;
-        this.medications = medications;
     }
 }

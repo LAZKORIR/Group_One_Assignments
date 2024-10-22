@@ -84,13 +84,13 @@ public class PhysicianController {
 
         // Set the relationships
         prescription.setPatient(patient);
-        prescription.setMedications(selectedMedications);
+        //prescription.setMedication(selectedMedications);
 
         // Assign the currently logged-in physician (for now, assuming Physician with ID=1)
         Physician physician = physicianRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Physician not found"));
         System.out.println("physician =="+physician);
-        prescription.setPhysician(physician);  // This is the missing piece!
+        //prescription.setPhysician(physician);  // This is the missing piece!
 
         // Save the prescription
         prescriptionRepository.save(prescription);
