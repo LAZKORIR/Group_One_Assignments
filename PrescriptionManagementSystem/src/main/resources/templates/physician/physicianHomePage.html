@@ -37,8 +37,12 @@
         </tr>
         </tbody>
     </table>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div class="actions">
+        <button><a href="/login">Logout</a></button>
+    </div>
 </div>
-<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
 <script>
     function searchPrescriptions() {
         let input = document.getElementById('search').value.toLowerCase();

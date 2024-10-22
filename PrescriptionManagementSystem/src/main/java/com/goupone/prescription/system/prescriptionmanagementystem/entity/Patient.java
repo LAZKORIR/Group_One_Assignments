@@ -24,6 +24,10 @@ public class Patient {
     private String insuranceProvider;
     private String insurancePolicyNumber;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
+
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<PrescriptionEntity> prescriptionEntities = new ArrayList<>();
 

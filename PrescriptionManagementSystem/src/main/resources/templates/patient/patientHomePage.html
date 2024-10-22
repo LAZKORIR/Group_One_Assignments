@@ -78,33 +78,22 @@
 <div class="pane">
   <h1>Patient Prescription History</h1>
 
-  <table>
+  <table id="prescriptionTable">
     <thead>
     <tr>
       <th>ID</th>
-      <th>Medications</th>
-      <th>Dosage</th>
-      <th>Refillable</th>
-      <th>Prescribing Doctor</th>
+      <th>Patient</th>
+      <th>Medication</th>
       <th>Issue Date</th>
-      <th>Expiration Date</th>
       <th>Refills Remaining</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="prescription : ${prescriptions}">
       <td th:text="${prescription.id}"></td>
-      <td>
-        <ul>
-          <li th:each="med : ${prescription.medications}" th:text="${med.name}"></li>
-        </ul>
-        <span th:if="${#lists.isEmpty(prescription.medications)}">No medications assigned</span>
-      </td>
-      <td th:text="${prescription.dosage}"></td>
-      <td th:text="${prescription.refillable ? 'Yes' : 'No'}"></td>
-      <td th:text="${prescription.prescribingDoctor}"></td>
+      <td th:text="${prescription.patient.name}"></td>
+      <td th:text="${prescription.medication.name}"></td>
       <td th:text="${prescription.issueDate}"></td>
-      <td th:text="${prescription.expirationDate}"></td>
       <td th:text="${prescription.refillsRemaining}"></td>
     </tr>
     </tbody>
@@ -112,7 +101,7 @@
 
 
   <div class="sidebar">
-    <button><a href="/">Back to Home</a></button>
+    <button><a href="/login">Logout</a></button>
   </div>
 </div>
 </body>

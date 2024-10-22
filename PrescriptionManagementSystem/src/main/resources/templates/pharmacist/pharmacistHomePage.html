@@ -27,16 +27,16 @@
     <tr th:each="prescription : ${prescriptions}">
       <td th:text="${prescription.id}"></td>
       <td th:text="${prescription.patient.name}"></td>
-      <td th:text="${prescription.medication}"></td>
+      <td th:text="${prescription.medication.name}"></td>
       <td th:text="${prescription.issueDate}"></td>
       <td th:text="${prescription.refillsRemaining}"></td>
     </tr>
     </tbody>
   </table>
 
-  <div class="sidebar">
-    <button><a href="/">Back to Home</a></button>
+  <div class="actions">
     <button><a href="/pharmacist/generic-substitutes/1">View Generic Substitutes</a></button>
+    <button><a href="/login">Logout</a></button>
   </div>
 </div>
 </body>

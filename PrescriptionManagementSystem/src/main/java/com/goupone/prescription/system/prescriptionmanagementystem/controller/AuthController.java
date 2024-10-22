@@ -1,8 +1,10 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.controller;
 
 import com.goupone.prescription.system.prescriptionmanagementystem.dto.LoginForm;
+import com.goupone.prescription.system.prescriptionmanagementystem.entity.Patient;
 import com.goupone.prescription.system.prescriptionmanagementystem.entity.Role;
 import com.goupone.prescription.system.prescriptionmanagementystem.entity.User;
+import com.goupone.prescription.system.prescriptionmanagementystem.repository.PatientRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.RoleRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private PatientRepository patientRepository;
 
     @GetMapping("/login")
     public String loginPage(Model model,
@@ -65,11 +70,20 @@ public class AuthController {
         );
 
         user.getRoles().add(userRole);  // Ensure roles are initialized before adding
-        userRepository.save(user);  // Save the user
+        // Save the user first to ensure it's persisted
+        User savedUser = userRepository.save(user);
+
+        // If the user is a patient, create a Patient record and associate it
+        if (role.equalsIgnoreCase("PATIENT")) {
+            Patient patient = new Patient();
+            patient.setUser(savedUser);  // Associate user with the patient
+            patient.setName(savedUser.getUsername());  // Example: Use username as patient name
+            patientRepository.save(patient);  // Save the patient in the Patients table
+        }
 
         redirectAttributes.addFlashAttribute("successMessage", "User registered successfully!");
 
-        return "redirect:/login";  // Redirect to login page after registration
+        return "redirect:/physician";  // Redirect to login page after registration
     }
 
 

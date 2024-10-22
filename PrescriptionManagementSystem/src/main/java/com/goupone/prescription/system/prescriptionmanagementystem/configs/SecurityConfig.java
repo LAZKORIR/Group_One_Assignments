@@ -20,7 +20,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/css/**", "/h2-console/**").permitAll()
-                        .requestMatchers("/auth/register").hasRole("PHYSICIAN")  // Only physicians can register users
+                        .requestMatchers("/auth/register").hasRole("PHYSICIAN")
+                        .requestMatchers("/physician/**").hasRole("PHYSICIAN")
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions().sameOrigin()) // Allow H2 iframe access
