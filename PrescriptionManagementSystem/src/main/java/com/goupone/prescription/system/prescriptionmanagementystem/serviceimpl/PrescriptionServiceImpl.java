@@ -17,7 +17,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service // Marks this class as a Spring-managed bean
 public class PrescriptionServiceImpl implements PrescriptionService {
@@ -51,63 +54,49 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     @Override
     public List<PrescriptionEntity> getAllPrescriptions() {
-        return prescriptionRepository.findAll();
+        return prescriptionRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(PrescriptionEntity::getIssueDate))
+                .collect(Collectors.toList());
     }
 
 
     public String registerUser(User user, String role, RedirectAttributes redirectAttributes) {
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Password encoding
 
+        Role userRole = roleRepository.findByName("ROLE_" + role)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid role: " + role));
 
-        // Encode the password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.getRoles().add(userRole); // Ensure roles are initialized before adding
 
+        User savedUser = userRepository.save(user); // Save the user
 
-        Role userRole = roleRepository.findByName("ROLE_" + role).orElseThrow(
-                () -> new IllegalArgumentException("Invalid role: " + role)
-        );
-
-        user.getRoles().add(userRole);  // Ensure roles are initialized before adding
-        // Save the user first to ensure it's persisted
-        User savedUser = userRepository.save(user);
-
-        // If the user is a patient, create a Patient record and associate it
-        if (role.equalsIgnoreCase("PATIENT")) {
-            Patient patient = new Patient();
-            patient.setUser(savedUser);  // Associate user with the patient
-            patient.setName(savedUser.getUsername());  // Example: Use username as patient name
-            patientRepository.save(patient);  // Save the patient in the Patients table
-
-        }
+        // Functional creation of patient record if the role is PATIENT
+        Optional.of(role)
+                .filter(r -> r.equalsIgnoreCase("PATIENT"))
+                .ifPresent(r -> patientRepository.save(new Patient(savedUser, savedUser.getUsername())));
 
         redirectAttributes.addFlashAttribute("successMessage", "User registered successfully!");
-
         return "redirect:/physician";
     }
 
     public String home(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-
-        // Extract the first role from the user's roles
-        String role = user.getRoles().stream()
-                .findFirst()
+        return Optional.of(authentication)
+                .map(Authentication::getPrincipal)
+                .map(User.class::cast)
+                .flatMap(user -> user.getRoles().stream().findFirst())
                 .map(Role::getName)
+                .map(role -> switch (role) {
+                    case "ROLE_PHYSICIAN" -> "redirect:/physician";
+                    case "ROLE_PHARMACIST" -> "redirect:/pharmacist";
+                    case "ROLE_PATIENT" -> "redirect:/patient";
+                    default -> throw new IllegalStateException("Unknown role: " + role);
+                })
                 .orElseThrow(() -> new IllegalStateException("User has no roles assigned"));
-
-        switch (role) {
-            case "ROLE_PHYSICIAN":
-                return "redirect:/physician";
-            case "ROLE_PHARMACIST":
-                return "redirect:/pharmacist";
-            case "ROLE_PATIENT":
-                return "redirect:/patient";
-            default:
-                throw new IllegalStateException("Unknown role: " + role);
-        }
     }
 
     @Override
-    public String prescribeMedicine(Long patientId,List<Long> medications,String dosage) {
-
+    public String prescribeMedicine(Long patientId, List<Long> medications, String dosage) {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
@@ -119,62 +108,65 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         Physician physician = physicianRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Physician not found"));
 
-        // Create a prescription for each selected medication
-        for (Medication medication : selectedMedications) {
-            PrescriptionEntity prescription = new PrescriptionEntity();
-            prescription.setPatient(patient);
-            prescription.setPhysician(physician);
-            prescription.setMedication(medication);
-            prescription.setDosage(dosage);
-            prescription.setIssueDate(LocalDate.now());
-            prescription.setExpirationDate(LocalDate.now().plusMonths(6));
-            prescription.setRefillable(true);
-            prescription.setRefillsRemaining(2);
-            prescription.setGenericAllowed(true);
-
-            prescriptionRepository.save(prescription);
-        }
+        // Create and save a prescription for each selected medication
+        selectedMedications.stream()
+                .map(medication -> new PrescriptionEntity(
+                        patient,
+                        physician,
+                        medication,
+                        dosage,
+                        LocalDate.now(),
+                        LocalDate.now().plusMonths(6),
+                        true,  // refillable
+                        2,     // refillsRemaining
+                        true   // genericAllowed
+                ))
+                .forEach(prescriptionRepository::save);
 
         return "redirect:/physician";
     }
 
+
+    // Helper method to create a PrescriptionEntity
+    private PrescriptionEntity createPrescription(Patient patient,Physician physician, Medication medication, String dosage) {
+        return new PrescriptionEntity(patient, physician,medication, dosage, LocalDate.now(), LocalDate.now().plusMonths(6), true, 2, true);
+    }
+
     @Override
     public String dispensePrescription(Long id) {
-        PrescriptionEntity prescription = prescriptionRepository.findById(id)
+        return prescriptionRepository.findById(id)
+                .map(this::handleDispense)
+                .map(prescriptionRepository::save)
+                .map(p -> "redirect:/pharmacist")
                 .orElseThrow(() -> new RuntimeException("Prescription not found"));
+    }
 
+    private PrescriptionEntity handleDispense(PrescriptionEntity prescription) {
         // Handle refillable prescriptions
         if (prescription.isRefillable() && prescription.getRefillsRemaining() > 0) {
             prescription.setRefillsRemaining(prescription.getRefillsRemaining() - 1);
+            prescription.setDispensed(true);  // Mark as partially or fully dispensed
 
-            // If at least one has been dispensed, mark as partially dispensed
-            if (prescription.getRefillsRemaining() > 0) {
-                prescription.setDispensed(true);  // Mark as partially dispensed
-            } else {
-                // If no more refills, mark as fully dispensed
-                prescription.setDispensed(true);
+            if (prescription.getRefillsRemaining() == 0) {
+                prescription.setDispensed(true);  // Fully dispensed if no refills left
             }
         } else if (!prescription.isRefillable()) {
-            // For non-refillable prescriptions, mark as dispensed
-            prescription.setDispensed(true);
+            prescription.setDispensed(true);  // Mark as dispensed for non-refillable
         } else {
             throw new RuntimeException("No refills remaining.");
         }
-
-        prescriptionRepository.save(prescription);
-        return "redirect:/pharmacist";
+        return prescription;
     }
 
     @Override
     public String viewPrescriptions(Model model, Principal principal) {
-        User currentUser = userRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Patient patient = patientRepository.findByName(currentUser.getUsername())
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
+        String username = principal.getName();
+        List<PrescriptionEntity> prescriptions = userRepository.findByUsername(username)
+                .flatMap(user -> patientRepository.findByName(user.getUsername()))
+                .map(patient -> prescriptionRepository.findByPatient(patient))
+                .orElseThrow(() -> new RuntimeException("Prescriptions not found"));
 
-        List<PrescriptionEntity> prescriptions = prescriptionRepository.findByPatient(patient);
         model.addAttribute("prescriptions", prescriptions);
-
         return "patient/patientHomePage";
     }
 

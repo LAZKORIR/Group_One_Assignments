@@ -14,13 +14,13 @@ public class PrescriptionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)  // Relationship to Medication entity
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medication_id", nullable = false)
     @ToString.Exclude
     private Medication medication;
 
     private String dosage;
-    private boolean refillable=false;
+    private boolean refillable = false;
     private String prescribingDoctor;
     private String doctorPhoneNumber;
     private LocalDate issueDate;
@@ -36,9 +36,29 @@ public class PrescriptionEntity {
     private Physician physician;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
     @JoinColumn(name = "patient_id", nullable = false)
+    @ToString.Exclude
     private Patient patient;
+
+    // Constructor with required parameters
+    public PrescriptionEntity(Patient patient, Physician physician, Medication medication, String dosage,
+                              LocalDate issueDate, LocalDate expirationDate, boolean refillable,
+                              int refillsRemaining, boolean genericAllowed) {
+        this.patient = patient;
+        this.physician = physician;
+        this.medication = medication;
+        this.dosage = dosage;
+        this.issueDate = issueDate;
+        this.expirationDate = expirationDate;
+        this.refillable = refillable;
+        this.refillsRemaining = refillsRemaining;
+        this.genericAllowed = genericAllowed;
+    }
+
+
+    public PrescriptionEntity() {
+
+    }
 
     // Custom Getters and Setters (for clarity)
     public Medication getMedication() {

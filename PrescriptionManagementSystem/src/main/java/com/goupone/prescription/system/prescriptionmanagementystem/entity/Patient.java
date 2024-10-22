@@ -34,6 +34,10 @@ public class Patient {
     @ToString.Exclude
     private List<PrescriptionEntity> prescriptionEntities = new ArrayList<>();
 
+    public Patient(User savedUser, String username) {
+        this.user=savedUser;
+        this.name=username;
+    }
 }
 
 
