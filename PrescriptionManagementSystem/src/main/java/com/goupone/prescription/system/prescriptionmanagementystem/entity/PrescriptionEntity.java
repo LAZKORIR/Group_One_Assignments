@@ -28,6 +28,7 @@ public class PrescriptionEntity {
     private int refillsRemaining;
     private int unitsPerRefill;
     private boolean genericAllowed;
+    private boolean dispensed = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "physician_id", nullable = false)

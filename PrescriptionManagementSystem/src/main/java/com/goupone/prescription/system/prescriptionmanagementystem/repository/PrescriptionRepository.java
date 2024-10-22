@@ -1,14 +1,16 @@
 package com.goupone.prescription.system.prescriptionmanagementystem.repository;
 
 
+import com.goupone.prescription.system.prescriptionmanagementystem.entity.Patient;
 import com.goupone.prescription.system.prescriptionmanagementystem.entity.PrescriptionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PrescriptionRepository extends JpaRepository<PrescriptionEntity, Long> {
-    //List<PrescriptionEntity> findByPatientId(Long patientId);
-    
-    //List<PrescriptionEntity> findByPhysicianId(Long physicianId);
+import java.util.List;
 
-    //List<Prescription> findByPhysicianName(String physicianName);
+public interface PrescriptionRepository extends JpaRepository<PrescriptionEntity, Long> {
+    List<PrescriptionEntity> findByPatient(Patient patient);
+
+    List<PrescriptionEntity> findAll();
+
 }
 

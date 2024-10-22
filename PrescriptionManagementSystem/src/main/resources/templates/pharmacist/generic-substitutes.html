@@ -2,13 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Generic Substitutes</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div class="pane">
 <h1>Generic Substitutes for <span th:text="${medication.name}"></span></h1>
-<ul>
-    <li th:each="sub : ${substitutes}" th:text="${sub.name}"></li>
-</ul>
-<button><a href="/pharmacist">Back to Dashboard</a></button>
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Unit</th>
+        <th>Side Effects</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="generic : ${genericSubstitutes}">
+        <td th:text="${generic.name}"></td>
+        <td th:text="${generic.unit}"></td>
+        <td th:text="${generic.sideEffects}"></td>
+    </tr>
+    </tbody>
+</table>
+
+
+    <div class="actions">
+        <button class="action-btn" onclick="location.href='/pharmacist'">Back to Prescriptions</button>
+    </div>
+</div>
 </body>
 </html>

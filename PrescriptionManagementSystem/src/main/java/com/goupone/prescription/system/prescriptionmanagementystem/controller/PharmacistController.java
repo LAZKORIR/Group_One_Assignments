@@ -47,24 +47,47 @@ public class PharmacistController {
     }
 
 
+//    @PostMapping("/pharmacist/dispense/{id}")
+//    public String dispenseMedicine(@PathVariable Long id) {
+//        PrescriptionEntity prescription = prescriptionRepository.findById(id).orElseThrow();
+//        if (prescription.isRefillable() && prescription.getRefillsRemaining() > 0) {
+//            prescription.setRefillsRemaining(prescription.getRefillsRemaining() - 1);
+//            prescriptionRepository.save(prescription);
+//        }
+//        return "redirect:/pharmacist";
+//    }
+
     @PostMapping("/pharmacist/dispense/{id}")
-    public String dispenseMedicine(@PathVariable Long id) {
-        PrescriptionEntity prescription = prescriptionRepository.findById(id).orElseThrow();
-        if (prescription.isRefillable() && prescription.getRefillsRemaining() > 0) {
-            prescription.setRefillsRemaining(prescription.getRefillsRemaining() - 1);
-            prescriptionRepository.save(prescription);
-        }
+    public String dispensePrescription(@PathVariable Long id) {
+        PrescriptionEntity prescription = prescriptionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prescription not found"));
+        prescription.setDispensed(true);
+        prescriptionRepository.save(prescription);
         return "redirect:/pharmacist";
     }
 
+
+//    @GetMapping("/pharmacist/generic-substitutes/{id}")
+//    public String viewGenericSubstitutes(@PathVariable Long id, Model model) {
+//        Medication medication = medicationRepository.findById(id).orElseThrow();
+//        List<Medication> substitutes = medicationRepository.findByGenericAvailable(true);
+//        model.addAttribute("medication", medication);
+//        model.addAttribute("substitutes", substitutes);
+//        return "pharmacist/generic-substitutes";
+//    }
+
     @GetMapping("/pharmacist/generic-substitutes/{id}")
     public String viewGenericSubstitutes(@PathVariable Long id, Model model) {
-        Medication medication = medicationRepository.findById(id).orElseThrow();
-        List<Medication> substitutes = medicationRepository.findByGenericAvailable(true);
+        Medication medication = medicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Medication not found"));
+
+        List<Medication> genericSubstitutes = medication.getGenericSubstitutes();
         model.addAttribute("medication", medication);
-        model.addAttribute("substitutes", substitutes);
+        model.addAttribute("genericSubstitutes", genericSubstitutes);
+
         return "pharmacist/generic-substitutes";
     }
+
 
 
 }

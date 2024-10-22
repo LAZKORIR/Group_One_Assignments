@@ -22,8 +22,8 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/css/**", "/js/**", "/h2-console/**").permitAll()
                         .requestMatchers("/auth/register").hasRole("PHYSICIAN")
                         .requestMatchers("/physician/**").hasRole("PHYSICIAN")
-                        .requestMatchers("/pharmacist/**").hasRole("PHARMACIST")
                         .requestMatchers("/patient/**").hasRole("PATIENT")
+                        .requestMatchers("/pharmacist/**").hasRole("PHARMACIST")
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions().sameOrigin()) // Allow H2 iframe access
