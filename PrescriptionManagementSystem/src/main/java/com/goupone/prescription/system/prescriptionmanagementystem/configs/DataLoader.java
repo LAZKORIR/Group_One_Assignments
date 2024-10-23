@@ -48,7 +48,7 @@ public class DataLoader implements CommandLineRunner {
 
         // 3. Create User for Patient
         User patientUser = new User();
-        patientUser.setUsername("john_doe");
+        patientUser.setUsername("maya");
         patientUser.setPassword(passwordEncoder.encode("password"));  // Use encoded password
         patientUser.getRoles().add(patientRole);
 
@@ -56,10 +56,10 @@ public class DataLoader implements CommandLineRunner {
 
         // 4. Create Patient and Associate with User
         Patient patient = new Patient();
-        patient.setName("John Doe");
+        patient.setName("Maya Alua");
         patient.setUser(patientUser);  // Associate with the saved user
         patient.setPhoneNumber("123-456-7890");
-        patient.setDateOfBirth(LocalDate.of(1990, 1, 1));
+        patient.setDateOfBirth(LocalDate.of(1999, 1, 1));
         patient.setInsuranceProvider("Good Health");
         patient.setInsurancePolicyNumber("GH12345678");
 
@@ -84,7 +84,7 @@ public class DataLoader implements CommandLineRunner {
         System.out.println("Medications loaded successfully!");
 
         // 6. Create and Save Prescription
-        PrescriptionEntity prescription = new PrescriptionEntity();
+        Prescription prescription = new Prescription();
         prescription.setMedication(med1);  // Use one of the saved medications
         prescription.setDosage("1 tablet twice a day");
         prescription.setRefillable(true);

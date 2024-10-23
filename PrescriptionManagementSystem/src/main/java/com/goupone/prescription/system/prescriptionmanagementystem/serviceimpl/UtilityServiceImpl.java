@@ -2,9 +2,8 @@ package com.goupone.prescription.system.prescriptionmanagementystem.serviceimpl;
 
 
 import com.goupone.prescription.system.prescriptionmanagementystem.entity.*;
-import com.goupone.prescription.system.prescriptionmanagementystem.model.Prescription;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.*;
-import com.goupone.prescription.system.prescriptionmanagementystem.service.PrescriptionService;
+import com.goupone.prescription.system.prescriptionmanagementystem.service.UtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,20 +15,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service // Marks this class as a Spring-managed bean
-public class PrescriptionServiceImpl implements PrescriptionService {
-
-    // Mock Data: In a real-world scenario, these would come from a database.
-    private final List<Prescription> prescriptions = new ArrayList<>();
+@Service
+public class UtilityServiceImpl implements UtilityService {
 
     @Autowired
-    PrescriptionRepository prescriptionRepository;
+    private PrescriptionRepository prescriptionRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -43,42 +39,71 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Autowired
     private PatientRepository patientRepository;
     @Autowired
-    MedicationRepository medicationRepository;
+    private MedicationRepository medicationRepository;
     @Autowired
-    PhysicianRepository physicianRepository;
+    private PhysicianRepository physicianRepository;
 
-    public PrescriptionServiceImpl() {
-        // Adding some sample prescriptionEntities for testing
-
-         }
 
     @Override
-    public List<PrescriptionEntity> getAllPrescriptions() {
+    public List<Prescription> getAllPrescriptions() {
         return prescriptionRepository.findAll()
                 .stream()
-                .sorted(Comparator.comparing(PrescriptionEntity::getIssueDate))
+                .sorted(Comparator.comparing(Prescription::getIssueDate))
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public String registerUser(User user, String role, String fullName, String phoneNumber, LocalDate dateOfBirth,
+                               String insuranceProvider, String insurancePolicyNumber, RedirectAttributes redirectAttributes) {
 
-    public String registerUser(User user, String role, RedirectAttributes redirectAttributes) {
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Password encoding
+        // Encode the password and set it on the user
+        Optional.ofNullable(user)
+                .ifPresent(u -> u.setPassword(passwordEncoder.encode(u.getPassword())));
 
-        Role userRole = roleRepository.findByName("ROLE_" + role)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid role: " + role));
+        // Find the role and add it to the user
+        roleRepository.findByName("ROLE_" + role)
+                .ifPresentOrElse(
+                        userRole -> user.getRoles().add(userRole),
+                        () -> {
+                            throw new IllegalArgumentException("Invalid role: " + role);
+                        }
+                );
 
-        user.getRoles().add(userRole); // Ensure roles are initialized before adding
+        // Save the user and process the patient details if necessary
+        User savedUser = userRepository.save(user);
 
-        User savedUser = userRepository.save(user); // Save the user
-
-        // Functional creation of patient record if the role is PATIENT
+        // If the role is 'PATIENT', use functional approach to create a Patient and save it
         Optional.of(role)
                 .filter(r -> r.equalsIgnoreCase("PATIENT"))
-                .ifPresent(r -> patientRepository.save(new Patient(savedUser, savedUser.getUsername())));
+                .ifPresent(r -> createAndSavePatient(savedUser, fullName, phoneNumber,
+                        dateOfBirth, insuranceProvider,
+                        insurancePolicyNumber));
 
+        // Add success message
         redirectAttributes.addFlashAttribute("successMessage", "User registered successfully!");
         return "redirect:/physician";
     }
+
+    // Helper method to create and save a patient
+    private void createAndSavePatient(User user,
+                                      String fullName,
+                                      String phoneNumber,
+                                      LocalDate dateOfBirth,
+                                      String insuranceProvider,
+                                      String insurancePolicyNumber) {
+
+        Optional.of(new Patient())
+                .ifPresent(patient -> {
+                    patient.setUser(user);
+                    patient.setName(fullName);
+                    patient.setPhoneNumber(phoneNumber);
+                    patient.setDateOfBirth(dateOfBirth);
+                    patient.setInsuranceProvider(insuranceProvider);
+                    patient.setInsurancePolicyNumber(insurancePolicyNumber);
+                    patientRepository.save(patient);  // Save the patient entity
+                });
+    }
+
 
     public String home(Authentication authentication) {
         return Optional.of(authentication)
@@ -96,41 +121,34 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public String prescribeMedicine(Long patientId, List<Long> medications, String dosage) {
+    public String prescribeMedicine(Long patientId, List<Long> medications, Map<Long, String> dosages) {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
-        List<Medication> selectedMedications = medicationRepository.findAllById(medications);
-        if (selectedMedications.isEmpty()) {
-            throw new RuntimeException("No medications found");
-        }
-
-        Physician physician = physicianRepository.findById(1L)
+        Physician physician = physicianRepository.findById(1L)  // Placeholder ID
                 .orElseThrow(() -> new RuntimeException("Physician not found"));
 
-        // Create and save a prescription for each selected medication
-        selectedMedications.stream()
-                .map(medication -> new PrescriptionEntity(
-                        patient,
-                        physician,
-                        medication,
-                        dosage,
-                        LocalDate.now(),
-                        LocalDate.now().plusMonths(6),
-                        true,  // refillable
-                        2,     // refillsRemaining
-                        true   // genericAllowed
-                ))
-                .forEach(prescriptionRepository::save);
+        List<Prescription> prescriptions = medications.stream()
+                .map(medicationId -> {
+                    Medication medication = medicationRepository.findById(medicationId)
+                            .orElseThrow(() -> new RuntimeException("Medication not found"));
+
+                    String dosage = dosages.getOrDefault(medicationId, "No dosage specified");
+
+                    return new Prescription(
+                            patient,physician, medication, dosage, LocalDate.now(),
+                            LocalDate.now().plusMonths(6), true, 2, true
+                    );
+                })
+                .toList();
+
+        prescriptionRepository.saveAll(prescriptions);
 
         return "redirect:/physician";
     }
 
 
-    // Helper method to create a PrescriptionEntity
-    private PrescriptionEntity createPrescription(Patient patient,Physician physician, Medication medication, String dosage) {
-        return new PrescriptionEntity(patient, physician,medication, dosage, LocalDate.now(), LocalDate.now().plusMonths(6), true, 2, true);
-    }
+
 
     @Override
     public String dispensePrescription(Long id) {
@@ -141,7 +159,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 .orElseThrow(() -> new RuntimeException("Prescription not found"));
     }
 
-    private PrescriptionEntity handleDispense(PrescriptionEntity prescription) {
+    private Prescription handleDispense(Prescription prescription) {
         // Handle refillable prescriptions
         if (prescription.isRefillable() && prescription.getRefillsRemaining() > 0) {
             prescription.setRefillsRemaining(prescription.getRefillsRemaining() - 1);
@@ -161,8 +179,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Override
     public String viewPrescriptions(Model model, Principal principal) {
         String username = principal.getName();
-        List<PrescriptionEntity> prescriptions = userRepository.findByUsername(username)
-                .flatMap(user -> patientRepository.findByName(user.getUsername()))
+        List<Prescription> prescriptions = userRepository.findByUsername(username)
+                .flatMap(user -> patientRepository.findByUserId(user.getId()))
                 .map(patient -> prescriptionRepository.findByPatient(patient))
                 .orElseThrow(() -> new RuntimeException("Prescriptions not found"));
 
@@ -185,7 +203,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Override
     public String getPhysicianHomePage(Model model) {
         // Fetch all prescriptions to display in the view
-        List<PrescriptionEntity> prescriptions = getAllPrescriptions();
+        List<Prescription> prescriptions = getAllPrescriptions();
         model.addAttribute("prescriptions", prescriptions);
         // Get the authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

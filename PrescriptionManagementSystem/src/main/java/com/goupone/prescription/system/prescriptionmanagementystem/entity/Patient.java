@@ -32,7 +32,7 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     @ToString.Exclude
-    private List<PrescriptionEntity> prescriptionEntities = new ArrayList<>();
+    private List<Prescription> prescriptionEntities = new ArrayList<>();
 
     public Patient(User savedUser, String username) {
         this.user=savedUser;

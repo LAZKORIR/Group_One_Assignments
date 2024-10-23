@@ -3,19 +3,30 @@
 <head>
   <title>Prescribe Medicine</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <script>
-    // Show success message when redirected from successful prescription
-    function showPrescribeSuccess() {
-      alert("Prescription successfully added!");
+  <style>
+    .medication-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-  </script>
+
+    .medication-item {
+      flex: 1 1 calc(50% - 10px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .medication-dosage {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 <div class="pane">
   <h1>Prescribe Medicine</h1>
 
-  <form th:action="@{/physician/prescribe}" method="post" onsubmit="showPrescribeSuccess()">
-    <!-- Select Patient -->
+  <form th:action="@{/physician/prescribe}" method="post">
     <label for="patientId">Select Patient:</label>
     <select id="patientId" name="patientId" required>
       <option th:each="patient : ${patients}"
@@ -23,28 +34,51 @@
               th:text="${patient.name}"></option>
     </select>
 
-    <!-- Select Medications -->
-    <label for="medications">Select Medications:</label>
-    <select id="medications" name="medications" multiple required>
-      <option th:each="med : ${medications}"
-              th:value="${med.id}"
-              th:text="${med.name}"></option>
-    </select>
+    <label>Select Medications:</label>
+    <div class="medication-group">
+      <div class="medication-item" th:each="med : ${medications}">
+        <input type="checkbox"
+               th:id="'med-' + ${med.id}"
+               th:name="medications"
+               th:value="${med.id}"
+               class="med-checkbox" />
+        <label th:for="'med-' + ${med.id}" th:text="${med.name}"></label>
 
-    <!-- Dosage -->
-    <label for="dosage">Dosage:</label>
-    <input type="text" id="dosage" name="dosage" placeholder="e.g., 1 tablet twice daily" required />
-
-    <!-- Back to Dashboard Button -->
-    <div class="action">
-      <!-- Submit Button -->
-      <button class="action-btn" type="submit">Prescribe</button>
-      <button class="action-btn" onclick="location.href='/physician'">Back to Dashboard</button>
+        <input type="text"
+               th:id="'dosage-' + ${med.id}"
+               th:name="'dosages[' + ${med.id} + ']'"
+               placeholder="Enter dosage"
+               class="medication-dosage" />
+      </div>
     </div>
 
+    <div class="action">
+      <button class="action-btn" type="submit">Prescribe</button>
+      <button class="action-btn" type="button" onclick="location.href='/physician'">Back to Dashboard</button>
+    </div>
   </form>
-
-
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const checkboxes = document.querySelectorAll('.med-checkbox');
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        const medicationId = checkbox.id.split('-')[1];
+        const dosageField = document.getElementById(`dosage-${medicationId}`);
+
+        if (checkbox.checked) {
+          dosageField.style.display = 'inline-block';
+          dosageField.required = true;
+        } else {
+          dosageField.style.display = 'none';
+          dosageField.required = false;
+        }
+      });
+    });
+  });
+</script>
+
 </body>
 </html>

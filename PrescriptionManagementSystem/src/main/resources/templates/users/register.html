@@ -8,50 +8,55 @@
 <div class="pane">
   <h1>Register New User</h1>
 
-<form action="/auth/register" method="post">
-  <label for="username">Username:</label>
-  <input type="text" id="username" name="username" required />
+  <form action="/auth/register" method="post">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required />
 
-  <label for="password">Password:</label>
-  <input type="password" id="password" name="password" required />
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required />
 
-  <label for="role">Role:</label>
-  <select id="role" name="role">
-    <option value="PATIENT">Patient</option>
-    <option value="PHARMACIST">Pharmacist</option>
-  </select>
+    <label for="role">Role:</label>
+    <select id="role" name="role">
+      <option value="PHARMACIST">Pharmacist</option>
+      <option value="PATIENT">Patient</option>
+    </select>
 
-  <!-- Additional fields if the user is registering as a patient -->
-  <div id="patientFields" style="display: none;">
-    <label for="phoneNumber">Phone Number:</label>
-    <input type="text" id="phoneNumber" name="phoneNumber" />
+    <!-- Patient-specific fields -->
+    <div id="patientFields" style="display: none;">
+      <label for="fullName">Full Name:</label>
+      <input type="text" id="fullName" name="fullName" />
 
-    <label for="insuranceProvider">Insurance Provider:</label>
-    <input type="text" id="insuranceProvider" name="insuranceProvider" />
+      <label for="phoneNumber">Phone Number:</label>
+      <input type="text" id="phoneNumber" name="phoneNumber" />
+
+      <label for="dateOfBirth">Date of Birth:</label>
+      <input type="date" id="dateOfBirth" name="dateOfBirth" />
+
+      <label for="insuranceProvider">Insurance Provider:</label>
+      <input type="text" id="insuranceProvider" name="insuranceProvider" />
+
+      <label for="insurancePolicyNumber">Insurance Policy Number:</label>
+      <input type="text" id="insurancePolicyNumber" name="insurancePolicyNumber" />
+    </div>
+
+    <div class="action">
+      <button class="action-btn" type="submit">Register</button>
+      <button class="action-btn" onclick="location.href='/physician'">Back to Dashboard</button>
+    </div>
+  </form>
+
+  <script>
+        const roleSelect = document.getElementById('role');
+        const patientFields = document.getElementById('patientFields');
+
+        roleSelect.addEventListener('change', () => {
+            patientFields.style.display = roleSelect.value === 'PATIENT' ? 'block' : 'none';
+        });
+    </script>
+
+  <div th:if="${param.error}" class="alert-error">
+    Registration failed. Please try again.
   </div>
-
-  <div class="action">
-  <button class="action-btn" type="submit">Register</button>
-  <button class="action-btn" onclick="location.href='/physician'">Back to Dashboard</button>
-  </div>
-</form>
-
-<script>
-    const roleSelect = document.getElementById('role');
-    const patientFields = document.getElementById('patientFields');
-
-    roleSelect.addEventListener('change', () => {
-        if (roleSelect.value === 'PATIENT') {
-            patientFields.style.display = 'block';
-        } else {
-            patientFields.style.display = 'none';
-        }
-    });
-</script>
-
-<div th:if="${param.error}" class="alert-error">
-  Registration failed. Please try again.
-</div>
 </div>
 </body>
 </html>

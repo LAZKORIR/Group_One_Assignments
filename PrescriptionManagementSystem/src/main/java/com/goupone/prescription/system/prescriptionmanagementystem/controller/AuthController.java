@@ -5,14 +5,19 @@ import com.goupone.prescription.system.prescriptionmanagementystem.entity.User;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.PatientRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.RoleRepository;
 import com.goupone.prescription.system.prescriptionmanagementystem.repository.UserRepository;
-import com.goupone.prescription.system.prescriptionmanagementystem.service.PrescriptionService;
+import com.goupone.prescription.system.prescriptionmanagementystem.service.UtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
 
 @Controller
 public class AuthController {
@@ -30,7 +35,7 @@ public class AuthController {
     private PatientRepository patientRepository;
 
     @Autowired
-    PrescriptionService prescriptionService;
+    UtilityService utilityService;
 
     @GetMapping("/login")
     public String loginPage(Model model,
@@ -62,19 +67,32 @@ public class AuthController {
 
     @PostMapping("/auth/register")
     public String registerUser(
-            @ModelAttribute User user,
+            @RequestParam String username,
+            @RequestParam String password,
             @RequestParam String role,
+            @RequestParam(required = false) String fullName,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateOfBirth,
+            @RequestParam(required = false) String insuranceProvider,
+            @RequestParam(required = false) String insurancePolicyNumber,
             RedirectAttributes redirectAttributes) {
 
-       return prescriptionService.registerUser(user,role,redirectAttributes);
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
 
+        // Call the service method to handle registration
+        return utilityService.registerUser(
+                user, role, fullName, phoneNumber, dateOfBirth,
+                insuranceProvider, insurancePolicyNumber, redirectAttributes);
     }
+
 
 
     @GetMapping("/home")
     public String home(Authentication authentication) {
 
-        return prescriptionService.home(authentication);
+        return utilityService.home(authentication);
     }
 
 

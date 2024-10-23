@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-public class PrescriptionEntity {
+public class Prescription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,9 +41,9 @@ public class PrescriptionEntity {
     private Patient patient;
 
     // Constructor with required parameters
-    public PrescriptionEntity(Patient patient, Physician physician, Medication medication, String dosage,
-                              LocalDate issueDate, LocalDate expirationDate, boolean refillable,
-                              int refillsRemaining, boolean genericAllowed) {
+    public Prescription(Patient patient, Physician physician, Medication medication, String dosage,
+                        LocalDate issueDate, LocalDate expirationDate, boolean refillable,
+                        int refillsRemaining, boolean genericAllowed) {
         this.patient = patient;
         this.physician = physician;
         this.medication = medication;
@@ -56,7 +56,7 @@ public class PrescriptionEntity {
     }
 
 
-    public PrescriptionEntity() {
+    public Prescription() {
 
     }
 

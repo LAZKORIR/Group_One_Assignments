@@ -14,14 +14,14 @@ public class Physician extends User {
 
     @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<PrescriptionEntity> prescriptions;
+    private List<Prescription> prescriptions;
 
     // Getters and Setters
-    public List<PrescriptionEntity> getPrescriptions() {
+    public List<Prescription> getPrescriptions() {
         return prescriptions;
     }
 
-    public void setPrescriptions(List<PrescriptionEntity> prescriptions) {
+    public void setPrescriptions(List<Prescription> prescriptions) {
         this.prescriptions = prescriptions;
     }
 }
