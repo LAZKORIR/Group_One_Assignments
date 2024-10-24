@@ -6,7 +6,12 @@
 </head>
 <body>
 <div class="pane">
+    <div class="header">
     <h1>Welcome, <span th:text="${username}">Physician</span></h1>
+    <div class="user-info">
+        <span>User ID: <span th:text="${userId}"></span></span>
+    </div>
+</div>
 
     <div class="actions">
         <button class="action-btn" onclick="location.href='/physician/prescribe'">Prescribe Medicine</button>

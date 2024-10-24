@@ -46,6 +46,7 @@ public class UtilityServiceImpl implements UtilityService {
 
     @Override
     public List<Prescription> getAllPrescriptions() {
+
         return prescriptionRepository.findAll()
                 .stream()
                 .sorted(Comparator.comparing(Prescription::getIssueDate))
@@ -160,7 +161,6 @@ public class UtilityServiceImpl implements UtilityService {
         return "redirect:/physician";
     }
 
-
     @Override
     public String dispensePrescription(Long id) {
         return prescriptionRepository.findById(id)
@@ -173,29 +173,52 @@ public class UtilityServiceImpl implements UtilityService {
     private Prescription handleDispense(Prescription prescription) {
         // Handle refillable prescriptions
         if (prescription.isRefillable() && prescription.getRefillsRemaining() > 0) {
+            // Reduce the count of remaining refills
             prescription.setRefillsRemaining(prescription.getRefillsRemaining() - 1);
-            prescription.setDispensed(true);  // Mark as partially or fully dispensed
 
+            // Determine if it's fully dispensed or partially dispensed
             if (prescription.getRefillsRemaining() == 0) {
-                prescription.setDispensed(true);  // Fully dispensed if no refills left
+                prescription.setDispensed(true);  // Mark as fully dispensed
+                prescription.setPartiallyDispensed(false);  // Not partially dispensed anymore
+                System.out.println("Prescription fully dispensed.");
+            } else {
+                prescription.setDispensed(false);  // Mark as not fully dispensed yet
+                prescription.setPartiallyDispensed(true);  // Mark as partially dispensed
+                System.out.println("Prescription partially dispensed. Refills remaining: " + prescription.getRefillsRemaining());
             }
         } else if (!prescription.isRefillable()) {
-            prescription.setDispensed(true);  // Mark as dispensed for non-refillable
+            // If the prescription is not refillable, mark as fully dispensed immediately
+            prescription.setDispensed(true);
+            prescription.setPartiallyDispensed(false);  // Not partially dispensed
+            System.out.println("Prescription fully dispensed (non-refillable).");
         } else {
             throw new RuntimeException("No refills remaining.");
         }
+
         return prescription;
     }
+
+
+
+
+
+
 
     @Override
     public String viewPrescriptions(Model model, Principal principal) {
         String username = principal.getName();
+        Long userId = userRepository.findByUsername(username)
+                .map(User::getId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         List<Prescription> prescriptions = userRepository.findByUsername(username)
                 .flatMap(user -> patientRepository.findByUserId(user.getId()))
                 .map(patient -> prescriptionRepository.findByPatient(patient))
                 .orElseThrow(() -> new RuntimeException("Prescriptions not found"));
 
         model.addAttribute("prescriptions", prescriptions);
+        model.addAttribute("userId", userId);
+        model.addAttribute("username", username);
         return "patient/patientHomePage";
     }
 
@@ -220,8 +243,13 @@ public class UtilityServiceImpl implements UtilityService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();  // Get the logged-in username
 
+        Long userId = userRepository.findByUsername(username)
+                .map(User::getId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         // Add username to the model to display in the HTML
         model.addAttribute("username", "Dr. "+username);
+        model.addAttribute("userId", userId);
         return "physician/physicianHomePage";  // Points to physician.html template
     }
 

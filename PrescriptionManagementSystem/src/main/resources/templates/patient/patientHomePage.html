@@ -6,7 +6,12 @@
 </head>
 <body>
 <div class="pane">
-  <h1>Patient Prescription History</h1>
+  <div class="header">
+  <h1>Hello <span th:text="${username}"></span>'s Prescription History </h1>
+    <div class="user-info">
+      <span>User ID: <span th:text="${userId}"></span></span>
+    </div>
+  </div>
 
   <table id="prescriptionTable">
     <thead>

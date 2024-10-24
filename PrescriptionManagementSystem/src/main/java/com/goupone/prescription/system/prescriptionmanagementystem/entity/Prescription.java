@@ -29,6 +29,7 @@ public class Prescription {
     private int unitsPerRefill;
     private boolean genericAllowed;
     private boolean dispensed = false;
+    private boolean partiallyDispensed=false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "physician_id", nullable = false)

@@ -39,14 +39,14 @@
       <div class="medication-item" th:each="med : ${medications}">
         <input type="checkbox"
                th:id="'med-' + ${med.id}"
-               th:name="medications"
+               name="medications"
                th:value="${med.id}"
                class="med-checkbox" />
         <label th:for="'med-' + ${med.id}" th:text="${med.name}"></label>
 
         <input type="text"
                th:id="'dosage-' + ${med.id}"
-               th:name="dosages[${med.id}]"
+               th:name="|dosages[${med.id}]|"
                placeholder="Enter dosage"
                class="medication-dosage" />
 
@@ -54,14 +54,14 @@
           <label>
             <input type="checkbox"
                    th:id="'refill-' + ${med.id}"
-                   th:name="requiresRefill[${med.id}]"
+                   th:name="|requiresRefill[${med.id}]|"
                    value="true"
                    class="refill-checkbox" /> Requires Refill
           </label>
 
           <input type="number"
                  th:id="'refillCount-' + ${med.id}"
-                 th:name="refillCounts[${med.id}]"
+                 th:name="|refillCounts[${med.id}]|"
                  placeholder="Enter number of refills"
                  min="1"
                  class="refill-count" />

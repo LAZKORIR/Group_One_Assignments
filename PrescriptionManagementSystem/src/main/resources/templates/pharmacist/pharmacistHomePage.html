@@ -7,7 +7,12 @@
 <body>
 
 <div class="pane">
-  <h1>Pharmacist Prescription List</h1>
+  <div class="header">
+  <h1>Welcome,  <span th:text="${username}"> </span></h1>
+  <div class="user-info">
+    <span>User ID: <span th:text="${userId}"></span></span>
+  </div>
+</div>
 
   <div class="search-bar">
     <input type="text" id="search" placeholder="Search by patient name" oninput="searchPrescriptions()" />
@@ -34,22 +39,13 @@
       <td th:text="${prescription.issueDate}"></td>
       <td th:text="${prescription.refillsRemaining}"></td>
       <td th:text="${prescription.refillable ? 'Yes' : 'No'}"></td>
-
-      <!-- Display Status -->
-      <td th:text="${prescription.dispensed
-                      ? (prescription.refillsRemaining > 0 ? 'Partially Dispensed' : 'Fully Dispensed')
-                      : 'Not Dispensed'}">
-      </td>
-
-      <!-- Action Buttons -->
+      <td th:text="${prescription.dispensed ? (prescription.partiallyDispensed ? 'Partially Dispensed' : 'Fully Dispensed') : 'Not Dispensed'}"></td>
       <td>
         <form th:action="@{/pharmacist/dispense/{id}(id=${prescription.id})}" method="post"
-              th:if="${prescription.refillable and prescription.refillsRemaining > 0}">
+              th:if="${!prescription.dispensed || prescription.partiallyDispensed}">
           <button type="submit">Dispense</button>
         </form>
-        <a th:href="@{/pharmacist/generic-substitutes/{id}(id=${prescription.medication.id})}">
-          View Substitutes
-        </a>
+        <a th:href="@{/pharmacist/generic-substitutes/{id}(id=${prescription.medication.id})}">View Substitutes</a>
       </td>
     </tr>
     </tbody>
@@ -61,15 +57,15 @@
 </div>
 
 <script>
-    function searchPrescriptions() {
-      const input = document.getElementById('search').value.toLowerCase();
-      const rows = document.querySelectorAll('#prescriptionTable tbody tr');
+  function searchPrescriptions() {
+    const input = document.getElementById('search').value.toLowerCase();
+    const rows = document.querySelectorAll('#prescriptionTable tbody tr');
 
-      rows.forEach(row => {
-        const patientName = row.cells[1].textContent.toLowerCase();
-        row.style.display = patientName.includes(input) ? '' : 'none';
-      });
-    }
+    rows.forEach(row => {
+      const patientName = row.cells[1].textContent.toLowerCase();
+      row.style.display = patientName.includes(input) ? '' : 'none';
+    });
+  }
 </script>
 
 </body>

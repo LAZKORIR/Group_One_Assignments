@@ -187,3 +187,16 @@ tr:hover {
     overflow-y: auto;
     margin-top: 10px;
 }
+
+/* Header for displaying welcome message and user ID on the same line */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* User info styling to align it to the right */
+.user-info {
+    margin-left: auto;
+    font-weight: bold;
+}
