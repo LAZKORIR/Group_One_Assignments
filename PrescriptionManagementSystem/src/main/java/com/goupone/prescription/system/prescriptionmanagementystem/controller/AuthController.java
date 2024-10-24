@@ -77,15 +77,21 @@ public class AuthController {
             @RequestParam(required = false) String insurancePolicyNumber,
             RedirectAttributes redirectAttributes) {
 
+        if (username.isEmpty() || password.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Username and password are required.");
+            return "redirect:/auth/register";
+        }
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
 
-        // Call the service method to handle registration
+        // Call the service to handle the registration
         return utilityService.registerUser(
                 user, role, fullName, phoneNumber, dateOfBirth,
                 insuranceProvider, insurancePolicyNumber, redirectAttributes);
     }
+
 
 
 

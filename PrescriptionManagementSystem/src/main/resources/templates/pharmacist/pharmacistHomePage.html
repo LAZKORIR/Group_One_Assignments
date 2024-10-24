@@ -39,7 +39,9 @@
       <td th:text="${prescription.issueDate}"></td>
       <td th:text="${prescription.refillsRemaining}"></td>
       <td th:text="${prescription.refillable ? 'Yes' : 'No'}"></td>
-      <td th:text="${prescription.dispensed ? (prescription.partiallyDispensed ? 'Partially Dispensed' : 'Fully Dispensed') : 'Not Dispensed'}"></td>
+      <td th:text="${prescription.isPartiallyDispensed ? 'Partially Dispensed'
+                  : (prescription.dispensed ? 'Fully Dispensed' : 'Not Dispensed')}"></td>
+      <!--      <td th:text="${prescription.dispensed ? (prescription.partiallyDispensed ? 'Partially Dispensed' : 'Fully Dispensed') : 'Not Dispensed'}"></td>-->
       <td>
         <form th:action="@{/pharmacist/dispense/{id}(id=${prescription.id})}" method="post"
               th:if="${!prescription.dispensed || prescription.partiallyDispensed}">

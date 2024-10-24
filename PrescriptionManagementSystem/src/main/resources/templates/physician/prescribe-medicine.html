@@ -26,7 +26,7 @@
 <div class="pane">
   <h1>Prescribe Medicine</h1>
 
-  <form th:action="@{/physician/prescribe}" method="post">
+  <form th:action="@{/physician/prescribe}" method="post" onsubmit="showSuccessMessage(event)">
     <label for="patientId">Select Patient:</label>
     <select id="patientId" name="patientId" required>
       <option th:each="patient : ${patients}"
@@ -77,6 +77,17 @@
 </div>
 
 <script>
+  // Function to handle success message on form submission
+  function showSuccessMessage(event) {
+    event.preventDefault(); // Stop the form from submitting immediately
+
+    // Perform additional checks if needed
+    alert("Prescription added successfully!");
+
+    // Now submit the form
+    event.target.submit();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const checkboxes = document.querySelectorAll('.med-checkbox');
 

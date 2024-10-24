@@ -3,12 +3,46 @@
 <head>
   <title>Register User</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <script>
+    function showSuccessMessage() {
+      alert("User registered successfully!");
+    }
+
+    function validateForm(event) {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username) {
+        alert("Username is required.");
+        event.preventDefault(); // Stop form submission
+        return;
+      }
+
+      if (!password) {
+        alert("Password is required.");
+        event.preventDefault(); // Stop form submission
+        return;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const roleSelect = document.getElementById('role');
+      const patientFields = document.getElementById('patientFields');
+
+      roleSelect.addEventListener('change', () => {
+        patientFields.style.display = roleSelect.value === 'PATIENT' ? 'block' : 'none';
+      });
+
+      const form = document.querySelector('form');
+      form.addEventListener('submit', validateForm);
+    });
+  </script>
 </head>
 <body>
 <div class="pane">
   <h1>Register New User</h1>
 
-  <form action="/auth/register" method="post">
+  <form action="/auth/register" method="post" onsubmit="showSuccessMessage()">
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" required />
 
@@ -41,18 +75,9 @@
 
     <div class="action">
       <button class="action-btn" type="submit">Register</button>
-      <button class="action-btn" onclick="location.href='/physician'">Back to Dashboard</button>
+      <button class="action-btn" type="button" onclick="location.href='/physician'">Back to Dashboard</button>
     </div>
   </form>
-
-  <script>
-        const roleSelect = document.getElementById('role');
-        const patientFields = document.getElementById('patientFields');
-
-        roleSelect.addEventListener('change', () => {
-            patientFields.style.display = roleSelect.value === 'PATIENT' ? 'block' : 'none';
-        });
-    </script>
 
   <div th:if="${param.error}" class="alert-error">
     Registration failed. Please try again.

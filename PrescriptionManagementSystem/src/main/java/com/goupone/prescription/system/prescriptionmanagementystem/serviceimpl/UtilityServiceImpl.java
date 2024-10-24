@@ -194,6 +194,7 @@ public class UtilityServiceImpl implements UtilityService {
         } else {
             throw new RuntimeException("No refills remaining.");
         }
+        System.out.println("Partially dispensed?" + prescription.isPartiallyDispensed());
 
         return prescription;
     }
