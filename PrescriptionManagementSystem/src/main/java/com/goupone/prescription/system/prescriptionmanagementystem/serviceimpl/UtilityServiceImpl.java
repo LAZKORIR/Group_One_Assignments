@@ -121,7 +121,13 @@ public class UtilityServiceImpl implements UtilityService {
     }
 
     @Override
-    public String prescribeMedicine(Long patientId, List<Long> medications, Map<Long, String> dosages) {
+    public String prescribeMedicine(
+            Long patientId,
+            List<Long> medications,
+            Map<Long, String> dosages,
+            Map<Long, Boolean> requiresRefill,
+            Map<Long, Integer> refillCounts) {
+
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
@@ -133,11 +139,18 @@ public class UtilityServiceImpl implements UtilityService {
                     Medication medication = medicationRepository.findById(medicationId)
                             .orElseThrow(() -> new RuntimeException("Medication not found"));
 
-                    String dosage = dosages.getOrDefault(medicationId, "No dosage specified");
+                    String dosage = dosages.getOrDefault(String.valueOf(medicationId), "No dosage specified");
+                    boolean refillRequired = requiresRefill.getOrDefault(medicationId, false);
+                    int refillCount = refillCounts.getOrDefault(medicationId, 0);
+
+                    System.out.println("dosage on service == "+dosage);
+                    System.out.println("refillRequired on service == "+refillRequired);
+                    System.out.println("refillCount on service == "+refillCount);
 
                     return new Prescription(
-                            patient,physician, medication, dosage, LocalDate.now(),
-                            LocalDate.now().plusMonths(6), true, 2, true
+                            patient, physician, medication, dosage,
+                            LocalDate.now(), LocalDate.now().plusMonths(6),
+                            refillRequired, refillCount, true
                     );
                 })
                 .toList();
@@ -146,8 +159,6 @@ public class UtilityServiceImpl implements UtilityService {
 
         return "redirect:/physician";
     }
-
-
 
 
     @Override

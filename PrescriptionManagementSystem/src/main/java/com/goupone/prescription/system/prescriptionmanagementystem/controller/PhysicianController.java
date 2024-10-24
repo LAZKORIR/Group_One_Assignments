@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class PhysicianController {
@@ -44,19 +46,61 @@ public class PhysicianController {
         return "physician/prescribe-medicine";
     }
 
+
     @PostMapping("/physician/prescribe")
     public String prescribeMedicine(
             @RequestParam Long patientId,
             @RequestParam List<Long> medications,
-            @RequestParam Map<Long, String> dosages) {
+            @RequestParam Map<String, String> dosages,
+            @RequestParam(required = false) Map<String, String> requiresRefill,
+            @RequestParam(required = false) Map<String, String> refillCounts) {
 
-        return utilityService.prescribeMedicine(patientId,medications,dosages);
+        // Filter and parse the data from the form submission
+        Map<Long, String> filteredDosages = parseMedicationData(dosages);
+        Map<Long, Boolean> filteredRequiresRefill = parseBooleanData(requiresRefill);
+        Map<Long, Integer> filteredRefillCounts = parseIntegerData(refillCounts);
+
+        // Log for debugging
+        System.out.println("Filtered Dosages: " + filteredDosages);
+        System.out.println("Filtered Requires Refill: " + filteredRequiresRefill);
+        System.out.println("Filtered Refill Counts: " + filteredRefillCounts);
+
+        // Call the service with the parsed data
+        return utilityService.prescribeMedicine(
+                patientId, medications, filteredDosages, filteredRequiresRefill, filteredRefillCounts);
     }
 
+    // Helper method to parse medication-related string data into a Long-keyed map
+    private Map<Long, String> parseMedicationData(Map<String, String> input) {
+        return input.entrySet().stream()
+                .filter(entry -> entry.getKey().matches("\\d+"))
+                .collect(Collectors.toMap(
+                        entry -> Long.parseLong(entry.getKey()),
+                        Map.Entry::getValue
+                ));
+    }
 
+    // Helper method to parse boolean data from the form
+    private Map<Long, Boolean> parseBooleanData(Map<String, String> input) {
+        if (input == null) return Collections.emptyMap();
+        return input.entrySet().stream()
+                .filter(entry -> entry.getKey().matches("\\d+"))
+                .collect(Collectors.toMap(
+                        entry -> Long.parseLong(entry.getKey()),
+                        entry -> Boolean.parseBoolean(entry.getValue())
+                ));
+    }
 
-
-
+    // Helper method to parse integer data from the form
+    private Map<Long, Integer> parseIntegerData(Map<String, String> input) {
+        if (input == null) return Collections.emptyMap();
+        return input.entrySet().stream()
+                .filter(entry -> entry.getKey().matches("\\d+"))
+                .collect(Collectors.toMap(
+                        entry -> Long.parseLong(entry.getKey()),
+                        entry -> Integer.parseInt(entry.getValue())
+                ));
+    }
 
 
 }

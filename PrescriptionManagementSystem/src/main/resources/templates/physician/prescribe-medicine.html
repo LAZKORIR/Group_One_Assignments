@@ -13,11 +13,11 @@
     .medication-item {
       flex: 1 1 calc(50% - 10px);
       display: flex;
-      align-items: center;
-      gap: 10px;
+      flex-direction: column;
+      gap: 5px;
     }
 
-    .medication-dosage {
+    .medication-dosage, .refill-group {
       display: none;
     }
   </style>
@@ -46,9 +46,26 @@
 
         <input type="text"
                th:id="'dosage-' + ${med.id}"
-               th:name="'dosages[' + ${med.id} + ']'"
+               th:name="dosages[${med.id}]"
                placeholder="Enter dosage"
                class="medication-dosage" />
+
+        <div class="refill-group" th:id="'refill-group-' + ${med.id}">
+          <label>
+            <input type="checkbox"
+                   th:id="'refill-' + ${med.id}"
+                   th:name="requiresRefill[${med.id}]"
+                   value="true"
+                   class="refill-checkbox" /> Requires Refill
+          </label>
+
+          <input type="number"
+                 th:id="'refillCount-' + ${med.id}"
+                 th:name="refillCounts[${med.id}]"
+                 placeholder="Enter number of refills"
+                 min="1"
+                 class="refill-count" />
+        </div>
       </div>
     </div>
 
@@ -67,13 +84,26 @@
       checkbox.addEventListener('change', () => {
         const medicationId = checkbox.id.split('-')[1];
         const dosageField = document.getElementById(`dosage-${medicationId}`);
+        const refillGroup = document.getElementById(`refill-group-${medicationId}`);
+        const refillCheckbox = document.getElementById(`refill-${medicationId}`);
+        const refillCount = document.getElementById(`refillCount-${medicationId}`);
 
         if (checkbox.checked) {
           dosageField.style.display = 'inline-block';
           dosageField.required = true;
+          refillGroup.style.display = 'block';
+
+          refillCheckbox.addEventListener('change', () => {
+            refillCount.style.display = refillCheckbox.checked ? 'inline-block' : 'none';
+            refillCount.required = refillCheckbox.checked;
+          });
         } else {
           dosageField.style.display = 'none';
           dosageField.required = false;
+          refillGroup.style.display = 'none';
+          refillCheckbox.checked = false;
+          refillCount.style.display = 'none';
+          refillCount.required = false;
         }
       });
     });
